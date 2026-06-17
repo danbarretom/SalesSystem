@@ -1,4 +1,4 @@
-package BasicClasses;
+package Modelos;
 
 public class VendaVista extends Venda {
 

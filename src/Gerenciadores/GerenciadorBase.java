@@ -1,5 +1,4 @@
 package Gerenciadores;
-import BasicClasses.*;
 import Interfaces.Armazenavel;
 
 import java.io.File;

@@ -1,5 +1,5 @@
 package Gerenciadores;
-import BasicClasses.Cliente;
+import Modelos.Cliente;
 
 public class GerenciadorClientes extends GerenciadorBase<Cliente> {
 

@@ -1,8 +1,8 @@
 package Gerenciadores;
-import BasicClasses.Venda;
-import BasicClasses.VendaPrazo;
-import BasicClasses.VendaVista;
-import BasicClasses.ItemVenda;
+import Modelos.Venda;
+import Modelos.VendaPrazo;
+import Modelos.VendaVista;
+import Modelos.ItemVenda;
 
 import java.io.File;
 import java.io.FileWriter;

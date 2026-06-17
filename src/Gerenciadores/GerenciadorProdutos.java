@@ -1,5 +1,5 @@
 package Gerenciadores;
-import BasicClasses.Produto;
+import Modelos.Produto;
 
 public class GerenciadorProdutos extends GerenciadorBase<Produto> {
 

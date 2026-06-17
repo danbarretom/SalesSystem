@@ -43,3 +43,9 @@ build/
 # Logs e arquivos de sistema do SO
 *.log
 .DS_Store
+
+# Arquivos de banco de dados locais (Testes)
+*.txt
+
+# Executáveis empacotados
+*.jar

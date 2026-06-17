@@ -1,4 +1,4 @@
-package BasicClasses;
+package Modelos;
 
 public class VendaPrazo extends Venda {
     private int codigoCliente;

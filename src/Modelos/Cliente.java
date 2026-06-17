@@ -1,4 +1,4 @@
-package BasicClasses;
+package Modelos;
 import Interfaces.Imprimivel;
 
 public class Cliente implements Imprimivel {
