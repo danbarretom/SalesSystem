@@ -1,3 +1,6 @@
+package Gerenciadores;
+import BasicClasses.Produto;
+
 public class GerenciadorProdutos extends GerenciadorBase<Produto> {
 
     public GerenciadorProdutos() {

@@ -1,3 +1,6 @@
+package BasicClasses;
+import Interfaces.Imprimivel;
+
 public class Cliente implements Imprimivel {
     private int codigoCliente;
     private String nomeCliente;

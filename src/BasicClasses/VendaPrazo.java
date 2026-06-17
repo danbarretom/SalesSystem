@@ -1,3 +1,5 @@
+package BasicClasses;
+
 public class VendaPrazo extends Venda {
     private int codigoCliente;
     private String dataVencimento;
@@ -30,8 +32,8 @@ public class VendaPrazo extends Venda {
     public void exibirDetalhes() {
         System.out.println("--- VENDA A PRAZO ---");
         System.out.println("Número: " + getNumeroVenda());
-        System.out.println("Data da Venda: " + getDataVenda());
-        System.out.println("Código do Cliente: " + getCodigoCliente());
+        System.out.println("Data da BasicClasses.Venda: " + getDataVenda());
+        System.out.println("Código do BasicClasses.Cliente: " + getCodigoCliente());
         System.out.println("Data de Vencimento: " + getDataVencimento());
         System.out.println("---------------------");
     }

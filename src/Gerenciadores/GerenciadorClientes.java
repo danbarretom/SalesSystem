@@ -1,3 +1,6 @@
+package Gerenciadores;
+import BasicClasses.Cliente;
+
 public class GerenciadorClientes extends GerenciadorBase<Cliente> {
 
     public GerenciadorClientes() {

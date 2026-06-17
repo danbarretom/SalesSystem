@@ -1,3 +1,6 @@
+package BasicClasses;
+import Interfaces.Imprimivel;
+
 public abstract class Venda implements Imprimivel {
     protected int numeroVenda;
     protected String dataVenda;

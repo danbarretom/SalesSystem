@@ -1,3 +1,7 @@
+package Gerenciadores;
+import BasicClasses.*;
+import Interfaces.Armazenavel;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

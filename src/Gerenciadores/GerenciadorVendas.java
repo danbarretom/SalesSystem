@@ -1,3 +1,9 @@
+package Gerenciadores;
+import BasicClasses.Venda;
+import BasicClasses.VendaPrazo;
+import BasicClasses.VendaVista;
+import BasicClasses.ItemVenda;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

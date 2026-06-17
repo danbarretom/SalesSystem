@@ -1,3 +1,6 @@
+package BasicClasses;
+import Interfaces.Imprimivel;
+
 public class Produto implements Imprimivel {
     private int codigoProduto;
     private String descricaoProduto;
@@ -36,7 +39,7 @@ public class Produto implements Imprimivel {
         System.out.println("Código: " + this.codigoProduto);
         System.out.println("Descrição: " + this.descricaoProduto);
         System.out.printf("Valor de Compra: R$ %.2f\n", this.valorCompra);
-        System.out.printf("Valor de Venda: R$ %.2f\n", this.valorVenda);
+        System.out.printf("Valor de BasicClasses.Venda: R$ %.2f\n", this.valorVenda);
         System.out.println("Estoque Atual: " + this.estoqueAtual);
         System.out.println("Estoque Mínimo: " + this.estoqueMinimo);
         System.out.println("------------------------");

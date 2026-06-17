@@ -1,3 +1,6 @@
+package BasicClasses;
+import Interfaces.Imprimivel;
+
 public class ItemVenda implements Imprimivel {
     private int numeroVenda;
     private int codigoProduto;
@@ -25,8 +28,8 @@ public class ItemVenda implements Imprimivel {
     @Override
     public void exibirDetalhes() {
         System.out.println("--- ITEM DA VENDA ---");
-        System.out.println("Número da Venda: " + this.numeroVenda);
-        System.out.println("Código do Produto: " + this.codigoProduto);
+        System.out.println("Número da BasicClasses.Venda: " + this.numeroVenda);
+        System.out.println("Código do BasicClasses.Produto: " + this.codigoProduto);
         System.out.println("Quantidade: " + this.quantidadeVendida);
         System.out.println("Valor: R$ " + this.valorVenda);
         System.out.println("---------------------");

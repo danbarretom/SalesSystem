@@ -1,3 +1,5 @@
+package BasicClasses;
+
 public class VendaVista extends Venda {
 
     public VendaVista() {}
@@ -24,7 +26,7 @@ public class VendaVista extends Venda {
     public void exibirDetalhes() {
         System.out.println("--- VENDA À VISTA ---");
         System.out.println("Número: " + getNumeroVenda());
-        System.out.println("Data da Venda: " + getDataVenda());
+        System.out.println("Data da BasicClasses.Venda: " + getDataVenda());
         System.out.println("---------------------");
     }
 }
