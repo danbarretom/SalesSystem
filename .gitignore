@@ -28,3 +28,18 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Configurações do IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Arquivos compilados
+out/
+target/
+build/
+*.class
+
+# Logs e arquivos de sistema do SO
+*.log
+.DS_Store
