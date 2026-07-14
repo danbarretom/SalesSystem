@@ -1,0 +1,68 @@
+name: CI/CD Pipeline Solo
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+    tags: [ "v*.*.*" ] # Dispara automação ao enviar tags (ex: v1.2.0)
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write # Permissão obrigatória para o bot criar a Release
+
+jobs:
+  # ==========================================
+  # JOB 1: INTEGRAÇÃO CONTÍNUA (CI)
+  # ==========================================
+  testes:
+    name: Compilar e Testar
+    # Só roda em branches, não roda quando você envia apenas a Tag
+    if: github.ref_type != 'tag'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Java JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21' # Você pode alterar para a versão que está usando (ex: 17)
+          distribution: 'temurin'
+
+      - name: Executar Testes Unitários
+        run: |
+          echo "Ambiente Java configurado com sucesso!"
+          # NOTA PARA O FUTURO: 
+          # Como o projeto atual é 'Java puro', rodar o JUnit 5 pelo terminal do Linux 
+          # exige o download manual do 'junit-platform-console-standalone.jar'.
+          # Porém, assim que migrarmos para o Spring Boot (que usa Maven), 
+          # este passo será resolvido apenas com o comando abaixo:
+          # mvn test
+
+  # ==========================================
+  # JOB 2: ENTREGA CONTÍNUA (CD) - AUTO RELEASE
+  # ==========================================
+  release:
+    name: Criar Release no GitHub
+    # Roda EXCLUSIVAMENTE quando você cria e envia uma Tag (git push origin vX.X.X)
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Extrair versão da Tag
+        id: extract_version
+        # Pega a referência "refs/tags/v1.1.0" e limpa para deixar apenas "v1.1.0"
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Publicar Release
+        run: |
+          echo "Gerando Release automática para a tag ${{ env.VERSION }}"
+          gh release create "${{ env.VERSION }}" \
+            --title "Release ${{ env.VERSION }}" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
