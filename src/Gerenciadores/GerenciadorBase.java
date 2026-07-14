@@ -19,17 +19,16 @@ public abstract class GerenciadorBase<T> implements Armazenavel {
 
     @Override
     public void carregarDados() {
-        try {
-            File file = new File(arquivo);
-            if (!file.exists()) return;
+        File file = new File(arquivo);
+        if (!file.exists()) return;
 
-            Scanner leitor = new Scanner(file);
+        // O Java agora fecha o Scanner automaticamente ao final do bloco
+        try (Scanner leitor = new Scanner(file)) {
             while (leitor.hasNextLine()) {
                 String linha = leitor.nextLine();
                 if (linha.trim().isEmpty()) continue;
                 lista.add(criarObjetoDaLinha(linha));
             }
-            leitor.close();
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo " + arquivo + ": " + e.getMessage());
         }
@@ -37,12 +36,11 @@ public abstract class GerenciadorBase<T> implements Armazenavel {
 
     @Override
     public void salvarDados() {
-        try {
-            FileWriter escritor = new FileWriter(arquivo);
+        // O Java agora fecha o FileWriter automaticamente ao final do bloco
+        try (FileWriter escritor = new FileWriter(arquivo)) {
             for (T obj : lista) {
                 escritor.write(gerarLinhaDoObjeto(obj) + "\n");
             }
-            escritor.close();
         } catch (IOException e) {
             System.out.println("Erro ao salvar o arquivo " + arquivo + ": " + e.getMessage());
         }

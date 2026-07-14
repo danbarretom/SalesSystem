@@ -1,4 +1,5 @@
 package Gerenciadores;
+
 import Modelos.Venda;
 import Modelos.VendaPrazo;
 import Modelos.VendaVista;
@@ -14,10 +15,20 @@ import java.util.Scanner;
 
 public class GerenciadorVendas extends GerenciadorBase<Venda> {
     private ArrayList<ItemVenda> listaItemVendas;
-    private final String ARQUIVO_ITENS = "itens_vendas.txt";
+    private String arquivoItens;
 
+    // 1. Construtor Original (Produção)
     public GerenciadorVendas() {
         super("vendas.txt");
+        this.arquivoItens = "itens_vendas.txt";
+        this.listaItemVendas = new ArrayList<>();
+        carregarItens();
+    }
+
+    // 2. NOVO Construtor para Testes (JUnit)
+    public GerenciadorVendas(String arquivoVendasTeste, String arquivoItensTeste) {
+        super(arquivoVendasTeste);
+        this.arquivoItens = arquivoItensTeste;
         this.listaItemVendas = new ArrayList<>();
         carregarItens();
     }
@@ -41,11 +52,11 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
     }
 
     private void carregarItens() {
-        try {
-            File arquivo = new File(ARQUIVO_ITENS);
-            if (!arquivo.exists()) return;
+        File arquivo = new File(this.arquivoItens);
+        if (!arquivo.exists()) return;
 
-            Scanner leitor = new Scanner(arquivo);
+        // Scanner encapsulado no try
+        try (Scanner leitor = new Scanner(arquivo)) {
             while (leitor.hasNextLine()) {
                 String linha = leitor.nextLine();
                 if (linha.trim().isEmpty()) continue;
@@ -58,23 +69,21 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
                 i.setValorVenda(Double.parseDouble(dados[3]));
                 listaItemVendas.add(i);
             }
-            leitor.close();
         } catch (IOException e) {
-            System.out.println("Erro ao ler o arquivo itens_vendas.txt: " + e.getMessage());
+            System.out.println("Erro ao ler o arquivo de itens: " + e.getMessage());
         }
     }
 
     private void salvarItensVendas() {
-        try {
-            FileWriter escritor = new FileWriter(ARQUIVO_ITENS);
+        // FileWriter encapsulado no try
+        try (FileWriter escritor = new FileWriter(this.arquivoItens)) {
             for (ItemVenda i : listaItemVendas) {
                 String linha = i.getNumeroVenda() + ";" + i.getCodigoProduto() + ";" +
                         i.getQuantidadeVendida() + ";" + i.getValorVenda();
                 escritor.write(linha + "\n");
             }
-            escritor.close();
         } catch (IOException e) {
-            System.out.println("Erro ao salvar o arquivo itens_vendas.txt: " + e.getMessage());
+            System.out.println("Erro ao salvar o arquivo de itens: " + e.getMessage());
         }
     }
 
