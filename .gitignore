@@ -49,3 +49,7 @@ build/
 
 # Executáveis empacotados
 *.jar
+
+# Pastas de build e artefatos do IntelliJ
+production/
+artifacts/
