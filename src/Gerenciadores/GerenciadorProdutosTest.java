@@ -23,12 +23,15 @@ public class GerenciadorProdutosTest {
     void tearDown() {
         File arquivo = new File(ARQUIVO_TESTE);
         if (arquivo.exists()) {
-            arquivo.delete();
+            boolean deletado = arquivo.delete();
+            if (!deletado) {
+                System.err.println("Aviso: Não foi possível apagar o arquivo de teste.");
+            }
         }
     }
 
     @Test
-    void deveCadastrarNovoProdutoComSucesso() throws Exception {
+    void deveCadastrarNovoProdutoComSucesso() {
         Produto p1 = new Produto();
         p1.setDescricaoProduto("Monitor 24 Pol");
         p1.setValorCompra(500.0);
@@ -44,7 +47,7 @@ public class GerenciadorProdutosTest {
     }
 
     @Test
-    void deveBaixarEstoqueCorretamente() throws Exception {
+    void deveBaixarEstoqueCorretamente() {
 
         Produto p1 = new Produto();
         p1.setDescricaoProduto("Teclado Mecânico");
@@ -64,9 +67,9 @@ public class GerenciadorProdutosTest {
         p1.setEstoqueAtual(2);
         gerenciador.cadastrarNovoProduto(p1);
 
-        Exception exception = assertThrows(Exception.class, () -> {
-            gerenciador.baixarEstoque(1, 5);
-        });
+        Exception exception = assertThrows(Exception.class, () ->
+            gerenciador.baixarEstoque(1, 5)
+        );
 
         assertTrue(exception.getMessage().contains("Estoque insuficiente"),
                 "A mensagem de erro deveria alertar sobre o estoque insuficiente.");

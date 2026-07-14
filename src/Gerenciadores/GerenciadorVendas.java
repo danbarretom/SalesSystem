@@ -17,7 +17,6 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
     private ArrayList<ItemVenda> listaItemVendas;
     private String arquivoItens;
 
-    // 1. Construtor Original (Produção)
     public GerenciadorVendas() {
         super("vendas.txt");
         this.arquivoItens = "itens_vendas.txt";
@@ -25,7 +24,6 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
         carregarItens();
     }
 
-    // 2. NOVO Construtor para Testes (JUnit)
     public GerenciadorVendas(String arquivoVendasTeste, String arquivoItensTeste) {
         super(arquivoVendasTeste);
         this.arquivoItens = arquivoItensTeste;

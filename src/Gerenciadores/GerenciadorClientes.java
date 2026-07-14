@@ -1,5 +1,7 @@
 package Gerenciadores;
+
 import Modelos.Cliente;
+import Excecoes.EntidadeNaoEncontradaException; // Importando o nosso erro
 
 public class GerenciadorClientes extends GerenciadorBase<Cliente> {
 
@@ -39,45 +41,41 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
         System.out.println("Cliente cadastrado com o código: " + novoCodigo);
     }
 
-    public void consultarCliente(int codigo) throws Exception {
-        boolean codigoExiste = false;
+
+    public void consultarCliente(int codigo) {
         for (Cliente c : lista) {
             if (c.getCodigoCliente() == codigo) {
                 c.exibirDetalhes();
-                codigoExiste = true;
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe cliente com esse código.");
+
+        throw new EntidadeNaoEncontradaException("Não existe cliente com o código " + codigo);
     }
 
-    public void excluirCliente(int codigo) throws Exception {
-        boolean codigoExiste = false;
+    public void excluirCliente(int codigo) {
         for (Cliente c : lista) {
             if (c.getCodigoCliente() == codigo) {
                 lista.remove(c);
                 salvarDados();
-                codigoExiste = true;
                 System.out.println("Cliente com o código " + codigo + " removido com sucesso.");
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe cliente com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe cliente com o código " + codigo);
     }
 
-    public void alterarCliente(int codigo, Cliente clienteAlterado) throws Exception {
-        boolean codigoExiste = false;
+    public void alterarCliente(int codigo, Cliente clienteAlterado) {
         for (Cliente c : lista) {
             if (c.getCodigoCliente() == codigo) {
                 c.setNomeCliente(clienteAlterado.getNomeCliente());
                 c.setEnderecoCliente(clienteAlterado.getEnderecoCliente());
                 c.setTelefoneCliente(clienteAlterado.getTelefoneCliente());
                 salvarDados();
-                codigoExiste = true;
                 System.out.println("Cliente com o código " + codigo + " alterado com sucesso.");
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe cliente com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe cliente com o código " + codigo);
     }
 }

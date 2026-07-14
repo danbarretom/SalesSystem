@@ -1,5 +1,8 @@
 package Gerenciadores;
+
 import Modelos.Produto;
+import Excecoes.EntidadeNaoEncontradaException;
+import Excecoes.RegraNegocioException;
 
 public class GerenciadorProdutos extends GerenciadorBase<Produto> {
 
@@ -46,34 +49,29 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
         System.out.println("Produto cadastrado com o código: " + novoCodigo);
     }
 
-    public void consultarProduto(int codigo) throws Exception {
-        boolean codigoExiste = false;
+    public void consultarProduto(int codigo) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigo) {
                 p.exibirDetalhes();
-                codigoExiste = true;
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe produto com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigo);
     }
 
-    public void excluirProduto(int codigo) throws Exception {
-        boolean codigoExiste = false;
+    public void excluirProduto(int codigo) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigo) {
                 lista.remove(p);
                 salvarDados();
-                codigoExiste = true;
                 System.out.println("Produto com o código " + codigo + " removido com sucesso.");
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe produto com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigo);
     }
 
-    public void alterarProduto(int codigo, Produto produtoAlterado) throws Exception {
-        boolean codigoExiste = false;
+    public void alterarProduto(int codigo, Produto produtoAlterado) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigo) {
                 p.setDescricaoProduto(produtoAlterado.getDescricaoProduto());
@@ -82,38 +80,35 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
                 p.setEstoqueAtual(produtoAlterado.getEstoqueAtual());
                 p.setEstoqueMinimo(produtoAlterado.getEstoqueMinimo());
                 salvarDados();
-                codigoExiste = true;
                 System.out.println("Produto com o código " + codigo + " alterado com sucesso.");
-                break;
+                return;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe produto com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigo);
     }
 
-    public void baixarEstoque(int codigoProduto, int quantidade) throws Exception {
-        boolean codigoExiste = false;
+    public void baixarEstoque(int codigoProduto, int quantidade) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigoProduto) {
-                codigoExiste = true;
                 if (p.getEstoqueAtual() >= quantidade) {
                     p.setEstoqueAtual(p.getEstoqueAtual() - quantidade);
                     salvarDados();
+                    return;
                 } else {
-                    throw new Exception("Estoque insuficiente! Quantidade atual disponível: " + p.getEstoqueAtual());
+                    throw new RegraNegocioException("Estoque insuficiente! Quantidade atual disponível: " + p.getEstoqueAtual());
                 }
-                break;
             }
         }
-        if (!codigoExiste) throw new Exception("Não existe produto com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigoProduto);
     }
 
-    public Produto buscarProduto(int codigoProduto) throws Exception {
+    public Produto buscarProduto(int codigoProduto) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigoProduto) {
                 return p;
             }
         }
-        throw new Exception("Não existe produto com esse código.");
+        throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigoProduto);
     }
 
     public void consultarEstoqueBaixo() {
