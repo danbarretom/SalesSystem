@@ -1,0 +1,25 @@
+# Changelog
+
+## [1.1.0] - 2026-07-14
+
+### Adicionado
+- Implementação de testes unitários com JUnit 5 (100% de cobertura de classes).
+- Adição de Custom Exceptions (EntidadeNaoEncontradaException, RegraNegocioException).
+
+### Alterado
+- Refatoração de Clean Code em todos os Gerenciadores.
+- Aplicação do padrão Try-with-Resources para gerenciar recursos de arquivos.
+- Isolamento da camada de visão (ViewSistema) do código fonte principal (Main).
+
+### Corrigido
+- Tratamento de exceções em tempo de execução, removendo poluição de 'throws'.
+
+---
+
+## [1.0.0] - 2026-07-14
+
+### Adicionado
+- Versão inicial do sistema.
+- Lógica de persistência em arquivos de texto (.txt).
+- Gerenciamento básico de Produtos, Clientes e Vendas (à vista e a prazo).
+- Estrutura baseada em classes de Gerenciadores e Modelos (POO).
