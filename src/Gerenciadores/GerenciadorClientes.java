@@ -9,6 +9,10 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
         super("clientes.txt");
     }
 
+    public GerenciadorClientes(String arquivoTeste) {
+        super(arquivoTeste);
+    }
+
     @Override
     protected Cliente criarObjetoDaLinha(String linha) {
         String[] dados = linha.split(";");
