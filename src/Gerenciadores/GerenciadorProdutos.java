@@ -7,6 +7,10 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
         super("produtos.txt");
     }
 
+    public GerenciadorProdutos(String arquivoTeste) {
+        super(arquivoTeste);
+    }
+
     @Override
     protected Produto criarObjetoDaLinha(String linha) {
         String[] dados = linha.split(";");
