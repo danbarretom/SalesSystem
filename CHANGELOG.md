@@ -1,4 +1,8 @@
-# Changelog
+## [1.1.1] - 2026-07-15
+
+### Changed
+- Reestruturação de diretórios para o padrão da comunidade e integração com Maven (`src/main/java` e `src/test/java`).
+- Atualização do `README.md` com detalhamento da Arquitetura, qualidade de software (CI/CD) e Roadmap para Spring Boot.
 
 ## [1.1.0] - 2026-07-14
 
