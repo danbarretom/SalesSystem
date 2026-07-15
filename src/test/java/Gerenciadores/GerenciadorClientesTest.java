@@ -55,6 +55,47 @@ public class GerenciadorClientesTest {
     }
 
     @Test
+    void deveExcluirClienteComSucesso() {
+        Cliente c1 = new Cliente(0, "Ana", "Rua C", "789");
+        gerenciador.cadastrarNovoCliente(c1);
+
+        gerenciador.excluirCliente(1);
+
+        assertThrows(EntidadeNaoEncontradaException.class, () -> gerenciador.consultarCliente(1));
+    }
+
+    @Test
+    void deveLancarExcecaoAoExcluirClienteInexistente() {
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class, () ->
+            gerenciador.excluirCliente(999)
+        );
+        assertTrue(exception.getMessage().contains("999"));
+    }
+
+    @Test
+    void deveAlterarClienteComSucesso() {
+        Cliente c1 = new Cliente(0, "Carlos", "Rua D", "111");
+        gerenciador.cadastrarNovoCliente(c1);
+
+        Cliente clienteAlterado = new Cliente(0, "Carlos Alterado", "Rua E", "222");
+        gerenciador.alterarCliente(1, clienteAlterado);
+
+        Cliente consultado = gerenciador.consultarCliente(1);
+        assertEquals("Carlos Alterado", consultado.getNomeCliente());
+        assertEquals("Rua E", consultado.getEnderecoCliente());
+        assertEquals("222", consultado.getTelefoneCliente());
+    }
+
+    @Test
+    void deveLancarExcecaoAoAlterarClienteInexistente() {
+        Cliente clienteAlterado = new Cliente(0, "Não importa", "Endereço", "Telefone");
+
+        assertThrows(EntidadeNaoEncontradaException.class, () ->
+            gerenciador.alterarCliente(999, clienteAlterado)
+        );
+    }
+
+    @Test
     void deveGerarLinhaEReconstruirClienteCorretamente() {
         Cliente original = new Cliente(3, "Maria", "Av. Central, 100", "99999-0000");
 
