@@ -7,9 +7,9 @@
 - Adição de Custom Exceptions (EntidadeNaoEncontradaException, RegraNegocioException).
 
 ### Alterado
-- Refatoração de Clean Code em todos os Gerenciadores.
+- Refatoração de Clean Code em todos os main.java.Gerenciadores.
 - Aplicação do padrão Try-with-Resources para gerenciar recursos de arquivos.
-- Isolamento da camada de visão (ViewSistema) do código fonte principal (Main).
+- Isolamento da camada de visão (main.java.ViewSistema) do código fonte principal (main.java.Main).
 
 ### Corrigido
 - Tratamento de exceções em tempo de execução, removendo poluição de 'throws'.
@@ -22,4 +22,4 @@
 - Versão inicial do sistema.
 - Lógica de persistência em arquivos de texto (.txt).
 - Gerenciamento básico de Produtos, Clientes e Vendas (à vista e a prazo).
-- Estrutura baseada em classes de Gerenciadores e Modelos (POO).
+- Estrutura baseada em classes de main.java.Gerenciadores e main.java.Modelos (POO).
