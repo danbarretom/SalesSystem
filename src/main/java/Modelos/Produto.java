@@ -11,15 +11,6 @@ public class Produto implements Imprimivel {
 
     public Produto() {}
 
-    public Produto(int codigoProduto, String descricaoProduto, double valorCompra, double valorVenda, int estoqueAtual, int estoqueMinimo) {
-        this.codigoProduto = codigoProduto;
-        this.descricaoProduto = descricaoProduto;
-        this.valorCompra = valorCompra;
-        this.valorVenda = valorVenda;
-        this.estoqueAtual = estoqueAtual;
-        this.estoqueMinimo = estoqueMinimo;
-    }
-
     public int getCodigoProduto() { return codigoProduto; }
     public void setCodigoProduto(int codigoProduto) { this.codigoProduto = codigoProduto; }
     public String getDescricaoProduto() { return descricaoProduto; }

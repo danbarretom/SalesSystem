@@ -1,6 +1,5 @@
 package Gerenciadores;
 
-import Modelos.Venda;
 import Modelos.VendaVista;
 import Modelos.VendaPrazo;
 import Modelos.ItemVenda;
