@@ -45,6 +45,16 @@ public class GerenciadorClientesTest {
     }
 
     @Test
+    void deveConsultarClienteERetornarOObjetoCorrespondente() {
+        Cliente c1 = new Cliente(0, "Pedro", "Rua B", "456");
+        gerenciador.cadastrarNovoCliente(c1);
+
+        Cliente consultado = gerenciador.consultarCliente(1);
+
+        assertEquals("Pedro", consultado.getNomeCliente());
+    }
+
+    @Test
     void deveGerarLinhaEReconstruirClienteCorretamente() {
         Cliente original = new Cliente(3, "Maria", "Av. Central, 100", "99999-0000");
 

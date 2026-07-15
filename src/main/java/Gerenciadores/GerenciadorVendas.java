@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class GerenciadorVendas extends GerenciadorBase<Venda> {
@@ -123,7 +124,6 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
         }
         lista.add(venda);
         salvarDados();
-        System.out.println("Venda número " + venda.getNumeroVenda() + " registrada com sucesso!");
     }
 
     public void registrarItemVenda(ItemVenda item) {
@@ -131,35 +131,19 @@ public class GerenciadorVendas extends GerenciadorBase<Venda> {
         salvarItensVendas();
     }
 
-    public void consultarVendasPorPeriodo(String dataIniStr, String dataFimStr) {
-        System.out.println("\n==================================================");
-        System.out.println("               RELATÓRIO DE VENDAS                ");
-        System.out.println("==================================================");
-        System.out.println("Nº VENDA | DATA | TIPO | CLIENTE | VENCIMENTO");
-        System.out.println("--------------------------------------------------");
-
+    public List<Venda> consultarVendasPorPeriodo(String dataIniStr, String dataFimStr) {
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate dataInicial = LocalDate.parse(dataIniStr, formato);
         LocalDate dataFinal = LocalDate.parse(dataFimStr, formato);
 
-        int contadorVendas = 0;
+        List<Venda> vendasNoPeriodo = new ArrayList<>();
         for (Venda v : lista) {
             LocalDate dataVendaAtual = LocalDate.parse(v.getDataVenda(), formato);
             if ((dataVendaAtual.isEqual(dataInicial) || dataVendaAtual.isAfter(dataInicial)) &&
                     (dataVendaAtual.isEqual(dataFinal) || dataVendaAtual.isBefore(dataFinal))) {
-
-                System.out.println(v.getNumeroVenda() + " | " + v.getDataVenda() + " | " +
-                        v.getTipoVenda() + " | " +
-                        (v.getCodigoCliente() == -1 ? "N/A" : v.getCodigoCliente()) + " | " +
-                        v.getDataVencimento());
-                contadorVendas++;
+                vendasNoPeriodo.add(v);
             }
         }
-        if (contadorVendas == 0) {
-            System.out.println("Nenhuma venda encontrada no período selecionado.");
-        } else {
-            System.out.println("--------------------------------------------------");
-            System.out.println("Total de vendas no período: " + contadorVendas);
-        }
+        return vendasNoPeriodo;
     }
 }

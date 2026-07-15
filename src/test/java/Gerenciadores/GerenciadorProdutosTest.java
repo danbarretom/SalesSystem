@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,8 +42,9 @@ public class GerenciadorProdutosTest {
         p1.setEstoqueAtual(10);
         p1.setEstoqueMinimo(2);
 
-        gerenciador.cadastrarNovoProduto(p1);
+        int codigoGerado = gerenciador.cadastrarNovoProduto(p1);
 
+        assertEquals(1, codigoGerado, "O código gerado e retornado deveria ser 1.");
         Produto salvo = gerenciador.buscarProduto(1);
         assertNotNull(salvo, "O produto deveria ter sido encontrado no banco.");
         assertEquals("Monitor 24 Pol", salvo.getDescricaoProduto(), "A descrição salva não corresponde.");
@@ -135,5 +137,51 @@ public class GerenciadorProdutosTest {
         assertThrows(EntidadeNaoEncontradaException.class, () ->
             gerenciador.alterarProduto(999, produtoAlterado)
         );
+    }
+
+    @Test
+    void deveConsultarProdutoERetornarOObjetoCorrespondente() {
+        Produto p1 = new Produto();
+        p1.setDescricaoProduto("Headset Gamer");
+        gerenciador.cadastrarNovoProduto(p1);
+
+        Produto consultado = gerenciador.consultarProduto(1);
+
+        assertEquals("Headset Gamer", consultado.getDescricaoProduto());
+    }
+
+    @Test
+    void deveRetornarApenasProdutosComEstoqueAbaixoDoMinimo() {
+        Produto p1 = new Produto();
+        p1.setDescricaoProduto("Estoque OK");
+        p1.setEstoqueAtual(10);
+        p1.setEstoqueMinimo(5);
+        gerenciador.cadastrarNovoProduto(p1);
+
+        Produto p2 = new Produto();
+        p2.setDescricaoProduto("Estoque Baixo");
+        p2.setEstoqueAtual(2);
+        p2.setEstoqueMinimo(5);
+        gerenciador.cadastrarNovoProduto(p2);
+
+        List<Produto> produtosComEstoqueBaixo = gerenciador.consultarEstoqueBaixo();
+
+        assertEquals(1, produtosComEstoqueBaixo.size(),
+                "Apenas o produto com estoque abaixo do mínimo deveria ser retornado.");
+        assertEquals("Estoque Baixo", produtosComEstoqueBaixo.get(0).getDescricaoProduto());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNenhumProdutoEstiverComEstoqueBaixo() {
+        Produto p1 = new Produto();
+        p1.setDescricaoProduto("Estoque OK");
+        p1.setEstoqueAtual(10);
+        p1.setEstoqueMinimo(5);
+        gerenciador.cadastrarNovoProduto(p1);
+
+        List<Produto> produtosComEstoqueBaixo = gerenciador.consultarEstoqueBaixo();
+
+        assertTrue(produtosComEstoqueBaixo.isEmpty(),
+                "Nenhum produto deveria ser retornado quando todos estão com estoque regular.");
     }
 }

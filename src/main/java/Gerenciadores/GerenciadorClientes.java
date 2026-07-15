@@ -30,7 +30,7 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
                 c.getEnderecoCliente() + ";" + c.getTelefoneCliente();
     }
 
-    public void cadastrarNovoCliente(Cliente cliente) {
+    public int cadastrarNovoCliente(Cliente cliente) {
         int novoCodigo = 1;
         if (!lista.isEmpty()) {
             int maiorCodigo = 0;
@@ -42,15 +42,13 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
         cliente.setCodigoCliente(novoCodigo);
         lista.add(cliente);
         salvarDados();
-        System.out.println("Cliente cadastrado com o código: " + novoCodigo);
+        return novoCodigo;
     }
 
-
-    public void consultarCliente(int codigo) {
+    public Cliente consultarCliente(int codigo) {
         for (Cliente c : lista) {
             if (c.getCodigoCliente() == codigo) {
-                c.exibirDetalhes();
-                return;
+                return c;
             }
         }
 
@@ -62,7 +60,6 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
             if (c.getCodigoCliente() == codigo) {
                 lista.remove(c);
                 salvarDados();
-                System.out.println("Cliente com o código " + codigo + " removido com sucesso.");
                 return;
             }
         }
@@ -76,7 +73,6 @@ public class GerenciadorClientes extends GerenciadorBase<Cliente> {
                 c.setEnderecoCliente(clienteAlterado.getEnderecoCliente());
                 c.setTelefoneCliente(clienteAlterado.getTelefoneCliente());
                 salvarDados();
-                System.out.println("Cliente com o código " + codigo + " alterado com sucesso.");
                 return;
             }
         }

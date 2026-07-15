@@ -4,6 +4,9 @@ import Modelos.Produto;
 import Excecoes.EntidadeNaoEncontradaException;
 import Excecoes.RegraNegocioException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GerenciadorProdutos extends GerenciadorBase<Produto> {
 
     public GerenciadorProdutos() {
@@ -34,7 +37,7 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
                 p.getEstoqueAtual() + ";" + p.getEstoqueMinimo();
     }
 
-    public void cadastrarNovoProduto(Produto produto) {
+    public int cadastrarNovoProduto(Produto produto) {
         int novoCodigo = 1;
         if (!lista.isEmpty()) {
             int maiorCodigo = 0;
@@ -46,14 +49,13 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
         produto.setCodigoProduto(novoCodigo);
         lista.add(produto);
         salvarDados();
-        System.out.println("Produto cadastrado com o código: " + novoCodigo);
+        return novoCodigo;
     }
 
-    public void consultarProduto(int codigo) {
+    public Produto consultarProduto(int codigo) {
         for (Produto p : lista) {
             if (p.getCodigoProduto() == codigo) {
-                p.exibirDetalhes();
-                return;
+                return p;
             }
         }
         throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigo);
@@ -64,7 +66,6 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
             if (p.getCodigoProduto() == codigo) {
                 lista.remove(p);
                 salvarDados();
-                System.out.println("Produto com o código " + codigo + " removido com sucesso.");
                 return;
             }
         }
@@ -80,7 +81,6 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
                 p.setEstoqueAtual(produtoAlterado.getEstoqueAtual());
                 p.setEstoqueMinimo(produtoAlterado.getEstoqueMinimo());
                 salvarDados();
-                System.out.println("Produto com o código " + codigo + " alterado com sucesso.");
                 return;
             }
         }
@@ -111,22 +111,13 @@ public class GerenciadorProdutos extends GerenciadorBase<Produto> {
         throw new EntidadeNaoEncontradaException("Não existe produto com o código " + codigoProduto);
     }
 
-    public void consultarEstoqueBaixo() {
-        System.out.println("\n==================================================");
-        System.out.println("       PRODUTOS COM ESTOQUE ABAIXO DO MÍNIMO      ");
-        System.out.println("==================================================");
-        System.out.println("CÓDIGO | DESCRIÇÃO | ATUAL | MÍNIMO");
-        System.out.println("--------------------------------------------------");
-        int contador = 0;
+    public List<Produto> consultarEstoqueBaixo() {
+        List<Produto> produtosComEstoqueBaixo = new ArrayList<>();
         for (Produto p : lista) {
             if (p.getEstoqueAtual() < p.getEstoqueMinimo()) {
-                System.out.println(p.getCodigoProduto() + " | " +
-                        p.getDescricaoProduto() + " | " +
-                        p.getEstoqueAtual() + " | " +
-                        p.getEstoqueMinimo());
-                contador++;
+                produtosComEstoqueBaixo.add(p);
             }
         }
-        if (contador == 0) System.out.println("Excelente! Todos os produtos estão com estoque regular.");
+        return produtosComEstoqueBaixo;
     }
 }

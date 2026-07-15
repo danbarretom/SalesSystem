@@ -5,6 +5,7 @@ import Excecoes.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
 public class ViewSistema {
@@ -100,7 +101,8 @@ public class ViewSistema {
                     System.out.print("Estoque mínimo: ");
                     novoProduto.setEstoqueMinimo(Integer.parseInt(scanner.nextLine()));
 
-                    gerenciadorProdutos.cadastrarNovoProduto(novoProduto);
+                    int codigoGerado = gerenciadorProdutos.cadastrarNovoProduto(novoProduto);
+                    System.out.println("Produto cadastrado com o código: " + codigoGerado);
                     break;
 
                 case 2:
@@ -108,7 +110,8 @@ public class ViewSistema {
                     System.out.print("Digite o código do produto: ");
                     try {
                         int codigoConsulta = Integer.parseInt(scanner.nextLine());
-                        gerenciadorProdutos.consultarProduto(codigoConsulta);
+                        Produto produtoConsultado = gerenciadorProdutos.consultarProduto(codigoConsulta);
+                        produtoConsultado.exibirDetalhes();
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
@@ -119,7 +122,8 @@ public class ViewSistema {
                     System.out.print("Digite o código do produto que deseja alterar: ");
                     try {
                         int codigoAlterar = Integer.parseInt(scanner.nextLine());
-                        gerenciadorProdutos.consultarProduto(codigoAlterar);
+                        Produto produtoAtual = gerenciadorProdutos.consultarProduto(codigoAlterar);
+                        produtoAtual.exibirDetalhes();
 
                         System.out.println("\nDigite os NOVOS dados do produto:");
                         Produto produtoAlterado = new Produto();
@@ -136,6 +140,7 @@ public class ViewSistema {
                         produtoAlterado.setEstoqueMinimo(Integer.parseInt(scanner.nextLine()));
 
                         gerenciadorProdutos.alterarProduto(codigoAlterar, produtoAlterado);
+                        System.out.println("Produto com o código " + codigoAlterar + " alterado com sucesso.");
 
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
@@ -151,6 +156,7 @@ public class ViewSistema {
                             System.out.println("Erro: Este produto não pode ser excluído pois já está atrelado a uma venda registrada.");
                         } else {
                             gerenciadorProdutos.excluirProduto(codigoExcluir);
+                            System.out.println("Produto com o código " + codigoExcluir + " removido com sucesso.");
                         }
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
@@ -198,7 +204,8 @@ public class ViewSistema {
                     novoCliente.setEnderecoCliente(scanner.nextLine());
                     System.out.print("Telefone do Cliente: ");
                     novoCliente.setTelefoneCliente(scanner.nextLine());
-                    gerenciadorClientes.cadastrarNovoCliente(novoCliente);
+                    int codigoGeradoCliente = gerenciadorClientes.cadastrarNovoCliente(novoCliente);
+                    System.out.println("Cliente cadastrado com o código: " + codigoGeradoCliente);
                     break;
 
                 case 2:
@@ -206,7 +213,8 @@ public class ViewSistema {
                     System.out.print("Digite o código do cliente: ");
                     try {
                         int codigoConsulta = Integer.parseInt(scanner.nextLine());
-                        gerenciadorClientes.consultarCliente(codigoConsulta);
+                        Cliente clienteConsultado = gerenciadorClientes.consultarCliente(codigoConsulta);
+                        clienteConsultado.exibirDetalhes();
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
@@ -217,8 +225,9 @@ public class ViewSistema {
                     System.out.print("Digite o código do cliente que deseja alterar: ");
                     try {
                         int codigoAlterar = Integer.parseInt(scanner.nextLine());
+                        Cliente clienteAtual = gerenciadorClientes.consultarCliente(codigoAlterar);
                         System.out.println("Cliente atual:");
-                        gerenciadorClientes.consultarCliente(codigoAlterar);
+                        clienteAtual.exibirDetalhes();
 
                         System.out.println("\nDigite os NOVOS dados do cliente:");
                         Cliente clienteAlterado = new Cliente();
@@ -230,6 +239,7 @@ public class ViewSistema {
                         clienteAlterado.setTelefoneCliente(scanner.nextLine());
 
                         gerenciadorClientes.alterarCliente(codigoAlterar, clienteAlterado);
+                        System.out.println("Cliente com o código " + codigoAlterar + " alterado com sucesso.");
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
                     }
@@ -244,6 +254,7 @@ public class ViewSistema {
                             System.out.println("Erro: Este cliente não pode ser excluído pois possui vendas a prazo registradas.");
                         } else {
                             gerenciadorClientes.excluirCliente(codigoExcluir);
+                            System.out.println("Cliente com o código " + codigoExcluir + " removido com sucesso.");
                         }
                     } catch (EntidadeNaoEncontradaException e) {
                         System.out.println("Erro: " + e.getMessage());
@@ -331,6 +342,7 @@ public class ViewSistema {
         }
 
         gerenciadorVendas.realizarVenda(novaVenda);
+        System.out.println("Venda número " + novaVenda.getNumeroVenda() + " registrada com sucesso!");
         int codigoProdutoItem = -1;
 
         System.out.println("\n--- ADICIONANDO PRODUTOS À VENDA ---");
@@ -411,11 +423,13 @@ public class ViewSistema {
                         }
                     }
 
-                    gerenciadorVendas.consultarVendasPorPeriodo(dataInicialInput, dataFinalInput);
+                    List<Venda> vendasEncontradas = gerenciadorVendas.consultarVendasPorPeriodo(dataInicialInput, dataFinalInput);
+                    exibirRelatorioVendas(vendasEncontradas);
                     break;
 
                 case 2:
-                    gerenciadorProdutos.consultarEstoqueBaixo();
+                    List<Produto> produtosComEstoqueBaixo = gerenciadorProdutos.consultarEstoqueBaixo();
+                    exibirRelatorioEstoqueBaixo(produtosComEstoqueBaixo);
                     break;
 
                 case 0:
@@ -426,6 +440,48 @@ public class ViewSistema {
                     System.out.println("\nOpção inválida! Tente novamente.");
                     break;
             }
+        }
+    }
+
+    private void exibirRelatorioVendas(List<Venda> vendas) {
+        System.out.println("\n==================================================");
+        System.out.println("               RELATÓRIO DE VENDAS                ");
+        System.out.println("==================================================");
+        System.out.println("Nº VENDA | DATA | TIPO | CLIENTE | VENCIMENTO");
+        System.out.println("--------------------------------------------------");
+
+        if (vendas.isEmpty()) {
+            System.out.println("Nenhuma venda encontrada no período selecionado.");
+            return;
+        }
+
+        for (Venda v : vendas) {
+            System.out.println(v.getNumeroVenda() + " | " + v.getDataVenda() + " | " +
+                    v.getTipoVenda() + " | " +
+                    (v.getCodigoCliente() == -1 ? "N/A" : v.getCodigoCliente()) + " | " +
+                    v.getDataVencimento());
+        }
+        System.out.println("--------------------------------------------------");
+        System.out.println("Total de vendas no período: " + vendas.size());
+    }
+
+    private void exibirRelatorioEstoqueBaixo(List<Produto> produtos) {
+        System.out.println("\n==================================================");
+        System.out.println("       PRODUTOS COM ESTOQUE ABAIXO DO MÍNIMO      ");
+        System.out.println("==================================================");
+        System.out.println("CÓDIGO | DESCRIÇÃO | ATUAL | MÍNIMO");
+        System.out.println("--------------------------------------------------");
+
+        if (produtos.isEmpty()) {
+            System.out.println("Excelente! Todos os produtos estão com estoque regular.");
+            return;
+        }
+
+        for (Produto p : produtos) {
+            System.out.println(p.getCodigoProduto() + " | " +
+                    p.getDescricaoProduto() + " | " +
+                    p.getEstoqueAtual() + " | " +
+                    p.getEstoqueMinimo());
         }
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -121,5 +122,29 @@ public class GerenciadorVendasTest {
         assertEquals("PRAZO", reconstruida.getTipoVenda());
         assertEquals(original.getCodigoCliente(), reconstruida.getCodigoCliente());
         assertEquals(original.getDataVencimento(), reconstruida.getDataVencimento());
+    }
+
+    @Test
+    void deveRetornarApenasVendasDentroDoPeriodoInformado() {
+        VendaVista vendaForaDoPeriodo = new VendaVista("01/07/2026");
+        gerenciador.realizarVenda(vendaForaDoPeriodo);
+
+        VendaVista vendaDentroDoPeriodo = new VendaVista("14/07/2026");
+        gerenciador.realizarVenda(vendaDentroDoPeriodo);
+
+        List<Venda> vendasNoPeriodo = gerenciador.consultarVendasPorPeriodo("10/07/2026", "20/07/2026");
+
+        assertEquals(1, vendasNoPeriodo.size(), "Apenas a venda dentro do período deveria ser retornada.");
+        assertEquals(vendaDentroDoPeriodo.getNumeroVenda(), vendasNoPeriodo.get(0).getNumeroVenda());
+    }
+
+    @Test
+    void deveRetornarListaVaziaQuandoNenhumaVendaEstiverNoPeriodo() {
+        VendaVista venda = new VendaVista("01/07/2026");
+        gerenciador.realizarVenda(venda);
+
+        List<Venda> vendasNoPeriodo = gerenciador.consultarVendasPorPeriodo("10/07/2026", "20/07/2026");
+
+        assertTrue(vendasNoPeriodo.isEmpty(), "Nenhuma venda deveria ser retornada fora do período.");
     }
 }
