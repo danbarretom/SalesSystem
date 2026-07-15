@@ -1,3 +1,15 @@
+## [1.2.0] - 2026-07-15
+
+### Alterado
+- Refatoração dos Gerenciadores para retornar dados em vez de imprimir diretamente no console, centralizando toda a exibição na `ViewSistema` (consistente com a separação Managers/View já declarada no `README.md`).
+
+### Adicionado
+- Testes de round-trip de persistência (`gerarLinhaDoObjeto`/`criarObjetoDaLinha`) para Produto, Cliente, VendaVista e VendaPrazo.
+- Testes de fronteira e de "não encontrado" cobrindo `excluirProduto`, `alterarProduto`, `excluirCliente` e `alterarCliente` nos três Gerenciadores.
+
+### Corrigido
+- Asserção genérica demais em teste de estoque insuficiente, trocada por `RegraNegocioException` explícita.
+
 ## [1.1.1] - 2026-07-15
 
 ### Changed
