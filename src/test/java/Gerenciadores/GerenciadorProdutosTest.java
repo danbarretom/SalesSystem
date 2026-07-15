@@ -1,6 +1,8 @@
 package Gerenciadores;
 
 import Modelos.Produto;
+import Excecoes.EntidadeNaoEncontradaException;
+import Excecoes.RegraNegocioException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,11 +69,71 @@ public class GerenciadorProdutosTest {
         p1.setEstoqueAtual(2);
         gerenciador.cadastrarNovoProduto(p1);
 
-        Exception exception = assertThrows(Exception.class, () ->
+        RegraNegocioException exception = assertThrows(RegraNegocioException.class, () ->
             gerenciador.baixarEstoque(1, 5)
         );
 
         assertTrue(exception.getMessage().contains("Estoque insuficiente"),
                 "A mensagem de erro deveria alertar sobre o estoque insuficiente.");
+    }
+
+    @Test
+    void devePermitirBaixarEstoqueQuandoQuantidadeIgualAoEstoqueAtual() {
+        Produto p1 = new Produto();
+        p1.setDescricaoProduto("Webcam HD");
+        p1.setEstoqueAtual(4);
+        gerenciador.cadastrarNovoProduto(p1);
+
+        gerenciador.baixarEstoque(1, 4);
+
+        Produto atualizado = gerenciador.buscarProduto(1);
+        assertEquals(0, atualizado.getEstoqueAtual(),
+                "Quando a quantidade vendida é igual ao estoque atual, o estoque deve zerar sem lançar exceção.");
+    }
+
+    @Test
+    void deveGerarLinhaEReconstruirProdutoCorretamente() {
+        Produto original = new Produto();
+        original.setCodigoProduto(7);
+        original.setDescricaoProduto("Cadeira Gamer");
+        original.setValorCompra(450.5);
+        original.setValorVenda(699.9);
+        original.setEstoqueAtual(12);
+        original.setEstoqueMinimo(3);
+
+        String linha = gerenciador.gerarLinhaDoObjeto(original);
+        Produto reconstruido = gerenciador.criarObjetoDaLinha(linha);
+
+        assertEquals(original.getCodigoProduto(), reconstruido.getCodigoProduto());
+        assertEquals(original.getDescricaoProduto(), reconstruido.getDescricaoProduto());
+        assertEquals(original.getValorCompra(), reconstruido.getValorCompra());
+        assertEquals(original.getValorVenda(), reconstruido.getValorVenda());
+        assertEquals(original.getEstoqueAtual(), reconstruido.getEstoqueAtual());
+        assertEquals(original.getEstoqueMinimo(), reconstruido.getEstoqueMinimo());
+    }
+
+    @Test
+    void deveLancarExcecaoAoConsultarProdutoInexistente() {
+        assertThrows(EntidadeNaoEncontradaException.class, () ->
+            gerenciador.consultarProduto(999)
+        );
+    }
+
+    @Test
+    void deveLancarExcecaoAoExcluirProdutoInexistente() {
+        EntidadeNaoEncontradaException exception = assertThrows(EntidadeNaoEncontradaException.class, () ->
+            gerenciador.excluirProduto(999)
+        );
+        assertTrue(exception.getMessage().contains("999"));
+    }
+
+    @Test
+    void deveLancarExcecaoAoAlterarProdutoInexistente() {
+        Produto produtoAlterado = new Produto();
+        produtoAlterado.setDescricaoProduto("Não importa");
+
+        assertThrows(EntidadeNaoEncontradaException.class, () ->
+            gerenciador.alterarProduto(999, produtoAlterado)
+        );
     }
 }

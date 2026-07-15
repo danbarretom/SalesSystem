@@ -43,4 +43,17 @@ public class GerenciadorClientesTest {
     void deveLancarErroAoConsultarClienteInexistente() {
         assertThrows(EntidadeNaoEncontradaException.class, () -> gerenciador.consultarCliente(999));
     }
+
+    @Test
+    void deveGerarLinhaEReconstruirClienteCorretamente() {
+        Cliente original = new Cliente(3, "Maria", "Av. Central, 100", "99999-0000");
+
+        String linha = gerenciador.gerarLinhaDoObjeto(original);
+        Cliente reconstruido = gerenciador.criarObjetoDaLinha(linha);
+
+        assertEquals(original.getCodigoCliente(), reconstruido.getCodigoCliente());
+        assertEquals(original.getNomeCliente(), reconstruido.getNomeCliente());
+        assertEquals(original.getEnderecoCliente(), reconstruido.getEnderecoCliente());
+        assertEquals(original.getTelefoneCliente(), reconstruido.getTelefoneCliente());
+    }
 }

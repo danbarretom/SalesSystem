@@ -1,5 +1,6 @@
 package Gerenciadores;
 
+import Modelos.Venda;
 import Modelos.VendaVista;
 import Modelos.VendaPrazo;
 import Modelos.ItemVenda;
@@ -89,5 +90,36 @@ public class GerenciadorVendasTest {
         // Valida se o sistema reconhece que o cliente 5 possui um vínculo com vendas registradas
         assertTrue(gerenciador.verificarClienteEmVenda(5), "O método deveria retornar true para o cliente com venda a prazo.");
         assertFalse(gerenciador.verificarClienteEmVenda(10), "O método deveria retornar false para um cliente sem vendas registradas.");
+    }
+
+    @Test
+    void deveGerarLinhaEReconstruirVendaVistaCorretamente() {
+        VendaVista original = new VendaVista("14/07/2026");
+        original.setNumeroVenda(10);
+
+        String linha = gerenciador.gerarLinhaDoObjeto(original);
+        Venda reconstruida = gerenciador.criarObjetoDaLinha(linha);
+
+        assertInstanceOf(VendaVista.class, reconstruida, "Uma linha do tipo VISTA deve ser reconstruída como VendaVista.");
+        assertEquals(original.getNumeroVenda(), reconstruida.getNumeroVenda());
+        assertEquals(original.getDataVenda(), reconstruida.getDataVenda());
+        assertEquals("VISTA", reconstruida.getTipoVenda());
+        assertEquals(-1, reconstruida.getCodigoCliente(), "Vendas à vista não têm cliente associado, o sentinela -1 deve ser preservado.");
+    }
+
+    @Test
+    void deveGerarLinhaEReconstruirVendaPrazoCorretamente() {
+        VendaPrazo original = new VendaPrazo("14/07/2026", 5, "30/07/2026");
+        original.setNumeroVenda(11);
+
+        String linha = gerenciador.gerarLinhaDoObjeto(original);
+        Venda reconstruida = gerenciador.criarObjetoDaLinha(linha);
+
+        assertInstanceOf(VendaPrazo.class, reconstruida, "Uma linha do tipo PRAZO deve ser reconstruída como VendaPrazo.");
+        assertEquals(original.getNumeroVenda(), reconstruida.getNumeroVenda());
+        assertEquals(original.getDataVenda(), reconstruida.getDataVenda());
+        assertEquals("PRAZO", reconstruida.getTipoVenda());
+        assertEquals(original.getCodigoCliente(), reconstruida.getCodigoCliente());
+        assertEquals(original.getDataVencimento(), reconstruida.getDataVencimento());
     }
 }
