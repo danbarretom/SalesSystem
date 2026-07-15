@@ -53,3 +53,8 @@ build/
 # Pastas de build e artefatos do IntelliJ
 production/
 artifacts/
+
+# Claude Code
+CLAUDE.md
+CLAUDE.local.md
+.claude/
