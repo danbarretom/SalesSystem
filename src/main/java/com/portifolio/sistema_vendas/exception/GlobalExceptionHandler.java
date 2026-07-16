@@ -3,9 +3,12 @@ package com.portifolio.sistema_vendas.exception;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -30,6 +33,26 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .toList();
         ErroResposta erro = new ErroResposta(HttpStatus.BAD_REQUEST.value(), "Dados inválidos", "Um ou mais campos são inválidos", detalhes);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErroResposta> tratarParametroAusente(MissingServletRequestParameterException ex) {
+        ErroResposta erro = new ErroResposta(HttpStatus.BAD_REQUEST.value(), "Parâmetro obrigatório ausente", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErroResposta> tratarTipoDeParametroInvalido(MethodArgumentTypeMismatchException ex) {
+        String mensagem = "Parâmetro '" + ex.getName() + "' recebeu um valor inválido: " + ex.getValue();
+        ErroResposta erro = new ErroResposta(HttpStatus.BAD_REQUEST.value(), "Parâmetro inválido", mensagem);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErroResposta> tratarCorpoDaRequisicaoInvalido(HttpMessageNotReadableException ex) {
+        ErroResposta erro = new ErroResposta(HttpStatus.BAD_REQUEST.value(), "Corpo da requisição inválido",
+                "O corpo da requisição está ausente ou mal formatado.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 

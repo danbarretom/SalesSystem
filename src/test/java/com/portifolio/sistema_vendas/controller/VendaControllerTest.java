@@ -138,4 +138,32 @@ class VendaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
     }
+
+    @Test
+    void buscarVendasPorPeriodo_semParametroObrigatorio_retorna400() throws Exception {
+        mockMvc.perform(get("/api/vendas/periodo").param("inicio", "2026-01-01"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.erro").value("Parâmetro obrigatório ausente"));
+    }
+
+    @Test
+    void buscarVendasPorPeriodo_comDataEmFormatoInvalido_retorna400() throws Exception {
+        mockMvc.perform(get("/api/vendas/periodo")
+                        .param("inicio", "data-invalida")
+                        .param("fim", "2026-01-31"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.erro").value("Parâmetro inválido"));
+    }
+
+    @Test
+    void registrarVenda_corpoDaRequisicaoMalFormado_retorna400() throws Exception {
+        mockMvc.perform(post("/api/vendas")
+                        .contentType("application/json")
+                        .content("{ isso não é json válido"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.erro").value("Corpo da requisição inválido"));
+    }
 }
