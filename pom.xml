@@ -11,20 +11,29 @@
 	<groupId>com.portifolio</groupId>
 	<artifactId>sistema-vendas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
+	<name>SalesSystem</name>
+	<description>Spring Boot REST API for managing products, customers, and sales — evolved from a pure Java SE console application built for a college OOP course.</description>
+	<url>https://github.com/danbarretom/SalesSystem</url>
 	<licenses>
-		<license/>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<id>danbarretom</id>
+			<name>Daniel Farias Barreto de Moura</name>
+			<email>danielbarretu@gmail.com</email>
+			<url>https://github.com/danbarretom</url>
+		</developer>
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:https://github.com/danbarretom/SalesSystem.git</connection>
+		<developerConnection>scm:git:https://github.com/danbarretom/SalesSystem.git</developerConnection>
+		<url>https://github.com/danbarretom/SalesSystem</url>
+		<tag>HEAD</tag>
 	</scm>
 	<properties>
 		<java.version>21</java.version>
