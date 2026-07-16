@@ -1,5 +1,6 @@
 package com.portifolio.sistema_vendas.service;
 
+import com.portifolio.sistema_vendas.exception.RecursoNaoEncontradoException;
 import com.portifolio.sistema_vendas.model.Cliente;
 import com.portifolio.sistema_vendas.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,23 @@ public class ClienteService {
         return clienteRepository.findById(id);
     }
 
+    // UPDATE (por ID)
+    public Cliente atualizarCliente(Long id, Cliente dadosAtualizados) {
+        Cliente clienteExistente = clienteRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + id));
+
+        clienteExistente.setNomeCliente(dadosAtualizados.getNomeCliente());
+        clienteExistente.setEnderecoCliente(dadosAtualizados.getEnderecoCliente());
+        clienteExistente.setTelefoneCliente(dadosAtualizados.getTelefoneCliente());
+
+        return clienteRepository.save(clienteExistente);
+    }
+
     // DELETE
     public void deletarCliente(Long id) {
+        if (!clienteRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + id);
+        }
         clienteRepository.deleteById(id);
     }
 }

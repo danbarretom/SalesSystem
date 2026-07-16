@@ -1,5 +1,6 @@
 package com.portifolio.sistema_vendas.service;
 
+import com.portifolio.sistema_vendas.exception.RecursoNaoEncontradoException;
 import com.portifolio.sistema_vendas.model.Produto;
 import com.portifolio.sistema_vendas.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,6 @@ public class ProdutoService {
 
     // CREATE / UPDATE
     public Produto salvarProduto(Produto produto) {
-        // Futuramente, suas regras de validação customizadas entram aqui
-        // Exemplo: if (produto.getPreco().compareTo(BigDecimal.ZERO) <= 0) throw Exception...
         return produtoRepository.save(produto);
     }
 
@@ -35,8 +34,25 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
+    // UPDATE (por ID)
+    public Produto atualizarProduto(Long id, Produto dadosAtualizados) {
+        Produto produtoExistente = produtoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + id));
+
+        produtoExistente.setDescricaoProduto(dadosAtualizados.getDescricaoProduto());
+        produtoExistente.setValorCompra(dadosAtualizados.getValorCompra());
+        produtoExistente.setValorVenda(dadosAtualizados.getValorVenda());
+        produtoExistente.setEstoqueAtual(dadosAtualizados.getEstoqueAtual());
+        produtoExistente.setEstoqueMinimo(dadosAtualizados.getEstoqueMinimo());
+
+        return produtoRepository.save(produtoExistente);
+    }
+
     // DELETE
     public void deletarProduto(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Produto não encontrado com o código: " + id);
+        }
         produtoRepository.deleteById(id);
     }
 

@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Version;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,9 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long codigoProduto;
+
+    @Version
+    private Integer versao;
 
     @Column(nullable = false, length = 255)
     private String descricaoProduto;
@@ -81,6 +85,14 @@ public class Produto {
 
     public void setEstoqueMinimo(int estoqueMinimo) {
         this.estoqueMinimo = estoqueMinimo;
+    }
+
+    public Integer getVersao() {
+        return versao;
+    }
+
+    public void setVersao(Integer versao) {
+        this.versao = versao;
     }
 
     @Override

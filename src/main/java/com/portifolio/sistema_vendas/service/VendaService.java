@@ -1,9 +1,13 @@
 package com.portifolio.sistema_vendas.service;
 
+import com.portifolio.sistema_vendas.exception.RecursoNaoEncontradoException;
+import com.portifolio.sistema_vendas.exception.RegraNegocioException;
+import com.portifolio.sistema_vendas.model.Cliente;
 import com.portifolio.sistema_vendas.model.ItemVenda;
 import com.portifolio.sistema_vendas.model.Produto;
 import com.portifolio.sistema_vendas.model.TipoVenda;
 import com.portifolio.sistema_vendas.model.Venda;
+import com.portifolio.sistema_vendas.repository.ClienteRepository;
 import com.portifolio.sistema_vendas.repository.ProdutoRepository;
 import com.portifolio.sistema_vendas.repository.VendaRepository;
 import org.springframework.stereotype.Service;
@@ -18,18 +22,24 @@ public class VendaService {
 
     private final VendaRepository vendaRepository;
     private final ProdutoRepository produtoRepository;
+    private final ClienteRepository clienteRepository;
 
-    public VendaService(VendaRepository vendaRepository, ProdutoRepository produtoRepository) {
+    public VendaService(VendaRepository vendaRepository, ProdutoRepository produtoRepository, ClienteRepository clienteRepository) {
         this.vendaRepository = vendaRepository;
         this.produtoRepository = produtoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     @Transactional
     public Venda salvarVenda(Venda venda) {
         if (venda.getTipoVenda() == TipoVenda.A_PRAZO) {
             if (venda.getCliente() == null || venda.getDataVencimento() == null) {
-                throw new IllegalArgumentException("Vendas a prazo exigem Cliente e Data de Vencimento!");
+                throw new RegraNegocioException("Vendas a prazo exigem Cliente e Data de Vencimento!");
             }
+
+            Cliente clienteBanco = clienteRepository.findById(venda.getCliente().getCodigoCliente())
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + venda.getCliente().getCodigoCliente()));
+            venda.setCliente(clienteBanco);
         }
 
         venda.setDataVenda(LocalDate.now());
@@ -39,15 +49,18 @@ public class VendaService {
         for (ItemVenda item : venda.getItens()) {
 
             Produto produtoBanco = produtoRepository.findById(item.getProduto().getCodigoProduto())
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado!"));
+                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + item.getProduto().getCodigoProduto()));
 
             // Validação de Estoque
             if (produtoBanco.getEstoqueAtual() < item.getQuantidade()) {
-                throw new IllegalArgumentException("Estoque insuficiente para o produto: " + produtoBanco.getDescricaoProduto() +
+                throw new RegraNegocioException("Estoque insuficiente para o produto: " + produtoBanco.getDescricaoProduto() +
                         ". Quantidade disponível: " + produtoBanco.getEstoqueAtual());
             }
             // Abate o estoque
             produtoBanco.setEstoqueAtual(produtoBanco.getEstoqueAtual() - item.getQuantidade());
+
+            // Garante que o item persistido referencia a entidade gerenciada, não o objeto parcial vindo da requisição
+            item.setProduto(produtoBanco);
 
             // Calcula o subtotal (Preço do banco x Quantidade)
             BigDecimal subtotalItem = produtoBanco.getValorVenda().multiply(new BigDecimal(item.getQuantidade()));

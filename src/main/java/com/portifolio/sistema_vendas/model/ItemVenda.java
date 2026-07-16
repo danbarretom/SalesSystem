@@ -32,6 +32,14 @@ public class ItemVenda {
     public ItemVenda() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Venda getVenda() {
         return venda;
     }
