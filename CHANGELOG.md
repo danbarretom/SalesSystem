@@ -1,3 +1,23 @@
+## [2.0.0] - 2026-07-17
+
+### Adicionado
+- Reescrita completa do sistema como API REST em Spring Boot 4.1 + Spring Data JPA, substituindo o console app Java SE original (que continua disponível nas tags `v1.0.0`/`v1.2.0`).
+- Arquitetura em camadas (`controller`/`service`/`repository`/`dto`/`model`/`exception`), DTOs com Bean Validation e tratamento de erro centralizado via `GlobalExceptionHandler`.
+- Persistência em PostgreSQL (Supabase), com H2 mantido só para a suíte de testes.
+- Suíte de 71 testes em camadas: Mockito puro nos services, `@DataJpaTest` nos repositórios, `@WebMvcTest` nos controllers e um teste de integração completo.
+- Documentação interativa da API via springdoc-openapi/Swagger UI.
+- Deploy em produção via Docker no Render.
+- Automação de release: merge de uma branch `release/*` em `main` passa a criar a tag e a GitHub Release automaticamente, lendo a versão direto deste changelog.
+
+### Alterado
+- CI (`ci-cd.yml`) passa a rodar a suíte de testes em Pull Requests para `dev`, além de `main`; branch protection em ambas passa a exigir esse check.
+
+### Corrigido
+- `VendaService` associava `ItemVenda`/`Venda` à entidade `Produto`/`Cliente` detached vinda do request em vez da entidade gerenciada pelo Hibernate.
+- Exceções de binding do Spring MVC (parâmetro ausente, tipo inválido, corpo malformado) respondiam 500 em vez de 400.
+- Rotas inexistentes respondiam 500 em vez de 404; o handler genérico de erro não registrava a stack trace no log.
+- `springdoc-openapi` travado na versão `2.5.0`, incompatível com o Spring Framework 7 do Spring Boot 4.1 — atualizado para `3.0.3`.
+
 ## [1.2.0] - 2026-07-15
 
 ### Alterado
