@@ -4,6 +4,9 @@ A Spring Boot REST API for managing products, customers, and sales — the curre
 started as a pure Java SE console application for a college OOP course and was rebuilt, from the ground up,
 into a tested, database-backed backend.
 
+🔗 **Live demo:** [`sistema-vendas-e125.onrender.com/swagger-ui.html`](https://sistema-vendas-e125.onrender.com/swagger-ui.html)
+(free-tier hosting — the first request after a period of inactivity can take 30-60s to wake up).
+
 ## 📖 Project History
 
 This repository is kept as a single git history on purpose — the goal is to keep the whole learning process
@@ -15,10 +18,11 @@ visible, not just the latest state:
 * **[`v1.2.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v1.2.0)** — The same Java SE app,
   refined independently after the grade was in: a Clean Code pass across every manager, a full JUnit 5 suite
   (100% class coverage), custom exceptions, and a GitHub Actions CI/CD pipeline.
-* **`v2.0.0`** *(this version)* — A complete architectural rewrite into a Spring Boot REST API: a real
-  relational database instead of flat files, a layered architecture (controller/service/repository/DTO), Bean
-  Validation, centralized exception handling, optimistic locking, and an automated test suite. The Java SE
-  version stays fully intact and browsable at the tags above — nothing was thrown away, just outgrown.
+* **[`v2.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v2.0.0)** *(this version)* — A complete
+  architectural rewrite into a Spring Boot REST API: a real relational database instead of flat files, a
+  layered architecture (controller/service/repository/DTO), Bean Validation, centralized exception handling,
+  optimistic locking, an automated test suite, and a live Docker deployment. The Java SE version stays fully
+  intact and browsable at the tags above — nothing was thrown away, just outgrown.
 
 A frontend is the planned next chapter, kept as its own milestone rather than bundled in here — see
 [Roadmap](#-roadmap) below.
@@ -42,8 +46,9 @@ A frontend is the planned next chapter, kept as its own milestone rather than bu
 * **Automated test suite** — 71 tests across four layers: Mockito unit tests for business rules, `@DataJpaTest`
   for custom queries, `@WebMvcTest` for HTTP-layer behavior, and a full-context integration test proving that
   Hibernate's dirty-checking actually persists stock changes, not just an in-memory mutation.
-* **CI/CD** — GitHub Actions runs the full test suite on every push/PR and cuts a GitHub Release
-  automatically on tagged versions.
+* **CI/CD** — GitHub Actions runs the full test suite on every push/PR to `main`/`dev`; merging a `release/*`
+  branch into `main` auto-creates the GitHub tag and Release, reading the version straight from
+  `CHANGELOG.md`. Deployed as a Docker container on Render, built from a multi-stage `Dockerfile`.
 
 ## 🛠️ Tech Stack
 
@@ -52,26 +57,27 @@ A frontend is the planned next chapter, kept as its own milestone rather than bu
 * **Database:** PostgreSQL (hosted on Supabase) for the running app; H2 in-memory for the test suite
 * **Testing:** JUnit 5, Mockito, AssertJ
 * **API Docs:** springdoc-openapi (Swagger UI)
-* **Build/DevOps:** Maven, GitHub Actions, GitFlow (Semantic Versioning)
+* **Build/DevOps:** Maven, Docker, GitHub Actions, GitFlow (Semantic Versioning)
+* **Deployment:** Render (Docker runtime)
 
 ## 🔌 API Overview
 
-| Method   | Endpoint                            | Description                     |
-|----------|--------------------------------------|----------------------------------|
-| `POST`   | `/api/clientes`                     | Register a customer             |
-| `GET`    | `/api/clientes`                     | List customers                  |
-| `GET`    | `/api/clientes/{id}`                | Get a customer by id             |
-| `PUT`    | `/api/clientes/{id}`                | Update a customer                |
-| `DELETE` | `/api/clientes/{id}`                | Delete a customer                |
-| `POST`   | `/api/produtos`                     | Register a product               |
-| `GET`    | `/api/produtos`                     | List products                    |
-| `GET`    | `/api/produtos/estoque-baixo`       | List products below minimum stock|
-| `GET`    | `/api/produtos/{id}`                | Get a product by id               |
-| `PUT`    | `/api/produtos/{id}`                | Update a product                 |
-| `DELETE` | `/api/produtos/{id}`                | Delete a product                 |
-| `POST`   | `/api/vendas`                       | Register a sale                  |
-| `GET`    | `/api/vendas`                       | List sales                       |
-| `GET`    | `/api/vendas/periodo?inicio=&fim=`  | List sales in a date range       |
+| Method   | Endpoint                            | Description                        |
+|----------|--------------------------------------|-------------------------------------|
+| `POST`   | `/api/clientes`                     | Register a customer                |
+| `GET`    | `/api/clientes`                     | List customers                     |
+| `GET`    | `/api/clientes/{id}`                | Get a customer by id                |
+| `PUT`    | `/api/clientes/{id}`                | Update a customer                   |
+| `DELETE` | `/api/clientes/{id}`                | Delete a customer                   |
+| `POST`   | `/api/produtos`                     | Register a product                  |
+| `GET`    | `/api/produtos`                     | List products                       |
+| `GET`    | `/api/produtos/estoque-baixo`       | List products below minimum stock   |
+| `GET`    | `/api/produtos/{id}`                | Get a product by id                  |
+| `PUT`    | `/api/produtos/{id}`                | Update a product                     |
+| `DELETE` | `/api/produtos/{id}`                | Delete a product                     |
+| `POST`   | `/api/vendas`                       | Register a sale                      |
+| `GET`    | `/api/vendas`                       | List sales                           |
+| `GET`    | `/api/vendas/periodo?inicio=&fim=`  | List sales in a date range           |
 
 Full interactive docs (request/response schemas, try-it-out) are served by Swagger UI once the app is
 running — see below.
