@@ -1,43 +1,116 @@
 # SalesSystem
 
-A robust, console-based application developed in Java SE for managing products, customers, and sales.
+A Spring Boot REST API for managing products, customers, and sales — the current form of a project that
+started as a pure Java SE console application for a college OOP course and was rebuilt, from the ground up,
+into a tested, database-backed backend.
+
+## 📖 Project History
+
+This repository is kept as a single git history on purpose — the goal is to keep the whole learning process
+visible, not just the latest state:
+
+* **[`v1.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v1.0.0)** — Original submission for
+  an Object-Oriented Programming college assignment: a console app managing products, customers, and sales
+  through flat `.txt` files, with CRUD operations and a classic Manager/Model class split. Graded 10/10.
+* **[`v1.2.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v1.2.0)** — The same Java SE app,
+  refined independently after the grade was in: a Clean Code pass across every manager, a full JUnit 5 suite
+  (100% class coverage), custom exceptions, and a GitHub Actions CI/CD pipeline.
+* **`v2.0.0`** *(this version)* — A complete architectural rewrite into a Spring Boot REST API: a real
+  relational database instead of flat files, a layered architecture (controller/service/repository/DTO), Bean
+  Validation, centralized exception handling, optimistic locking, and an automated test suite. The Java SE
+  version stays fully intact and browsable at the tags above — nothing was thrown away, just outgrown.
+
+A frontend is the planned next chapter, kept as its own milestone rather than bundled in here — see
+[Roadmap](#-roadmap) below.
 
 ## 🚀 Features
 
-**Domain Operations:**
-* **Product Management:** Full CRUD for inventory items.
-* **Customer Management:** Full CRUD for registering and managing clients.
-* **Sales Operations:** Support for Cash Sales (À Vista) and Credit Sales (A Prazo) with automatic inventory deduction and real-time customer validation.
-* **Temporal Validation:** Uses `java.time.LocalDate` to prevent past due dates.
+**Domain Operations**
+* **Product management** — full CRUD, with optimistic locking (`@Version`) to prevent lost updates under
+  concurrent stock changes, plus a dedicated low-stock query.
+* **Customer management** — full CRUD for customers eligible for credit sales.
+* **Sales** — cash (À Vista) and credit (A Prazo) sales, with stock validation/deduction, automatic
+  subtotal/total calculation, credit-sale rules (a valid customer and due date are required), and queries by
+  date range.
 
-**🛡️ Architecture & Quality:**
-* **Clean Code & Separation of Concerns:** Business logic (Managers) is strictly isolated from the presentation layer (View).
-* **100% Test Coverage:** All business rules and managers are fully covered by unit tests.
-* **Robust Error Handling:** Custom exceptions (`EntidadeNaoEncontradaException`, `RegraNegocioException`) and implementation of *Try-with-Resources* to prevent memory leaks and handle file manipulation safely.
-* **CI/CD Pipeline:** Automated workflows using GitHub Actions for continuous integration (running tests automatically on push) and continuous delivery (automated release generation).
+**Architecture & Quality**
+* **Layered architecture** — controllers stay thin, business rules live in the service layer, and entities
+  are never exposed directly: dedicated request/response DTOs carry Bean Validation everywhere.
+* **Centralized error handling** — a single `@RestControllerAdvice` maps domain exceptions, validation
+  failures, malformed requests, and concurrency conflicts to consistent, structured JSON error responses
+  (`404`/`400`/`409`) instead of leaking stack traces.
+* **Automated test suite** — 71 tests across four layers: Mockito unit tests for business rules, `@DataJpaTest`
+  for custom queries, `@WebMvcTest` for HTTP-layer behavior, and a full-context integration test proving that
+  Hibernate's dirty-checking actually persists stock changes, not just an in-memory mutation.
+* **CI/CD** — GitHub Actions runs the full test suite on every push/PR and cuts a GitHub Release
+  automatically on tagged versions.
 
 ## 🛠️ Tech Stack
 
-* **Language:** Java SE 21 (OpenJDK)
-* **Paradigm:** Object-Oriented Programming (OOP)
-* **Testing:** JUnit 5
-* **DevOps:** GitHub Actions, GitFlow (Semantic Versioning)
-* **Data Persistence:** Local flat files (`.txt`) separated by semicolons (`;`).
+* **Framework:** Spring Boot 4.1, Spring Data JPA, Spring Web MVC
+* **Language:** Java 21 (Eclipse Temurin LTS)
+* **Database:** PostgreSQL (hosted on Supabase) for the running app; H2 in-memory for the test suite
+* **Testing:** JUnit 5, Mockito, AssertJ
+* **API Docs:** springdoc-openapi (Swagger UI)
+* **Build/DevOps:** Maven, GitHub Actions, GitFlow (Semantic Versioning)
+
+## 🔌 API Overview
+
+| Method   | Endpoint                            | Description                     |
+|----------|--------------------------------------|----------------------------------|
+| `POST`   | `/api/clientes`                     | Register a customer             |
+| `GET`    | `/api/clientes`                     | List customers                  |
+| `GET`    | `/api/clientes/{id}`                | Get a customer by id             |
+| `PUT`    | `/api/clientes/{id}`                | Update a customer                |
+| `DELETE` | `/api/clientes/{id}`                | Delete a customer                |
+| `POST`   | `/api/produtos`                     | Register a product               |
+| `GET`    | `/api/produtos`                     | List products                    |
+| `GET`    | `/api/produtos/estoque-baixo`       | List products below minimum stock|
+| `GET`    | `/api/produtos/{id}`                | Get a product by id               |
+| `PUT`    | `/api/produtos/{id}`                | Update a product                 |
+| `DELETE` | `/api/produtos/{id}`                | Delete a product                 |
+| `POST`   | `/api/vendas`                       | Register a sale                  |
+| `GET`    | `/api/vendas`                       | List sales                       |
+| `GET`    | `/api/vendas/periodo?inicio=&fim=`  | List sales in a date range       |
+
+Full interactive docs (request/response schemas, try-it-out) are served by Swagger UI once the app is
+running — see below.
 
 ## 💻 Running the Application
 
-1. Clone this repository: `git clone https://github.com/danbarretom/SalesSystem.git`
-2. Navigate to the directory containing the compiled `.jar` file.
-3. Run the executable using the terminal: `java -jar ControleVendas.jar`
+Requires JDK 21 and a PostgreSQL database.
 
-*Note: The application will automatically generate the required `.txt` files in the root directory upon its first execution.*
+```bash
+git clone https://github.com/danbarretom/SalesSystem.git
+cd SalesSystem
+```
 
-## 🔮 Future Enhancements (Roadmap)
+By default, `application.properties` points at the maintainer's own Supabase project, which needs a password
+you won't have. Point it at your own PostgreSQL instance instead by exporting these before running — Spring
+Boot's environment variables always take priority over `application.properties`:
 
-While the current CLI version successfully implements core OOP, automated testing, and persistence concepts, the architecture was designed with scalability in mind. The planned evolutions for this system include:
+```bash
+export SPRING_DATASOURCE_URL="jdbc:postgresql://<host>:<port>/<database>"
+export SPRING_DATASOURCE_USERNAME="<user>"
+export SPRING_DATASOURCE_PASSWORD="<password>"
 
-* **RESTful API Conversion & Relational Database:** Evolving the monolithic console application into a backend API using the **Spring Boot** framework, replacing `.txt` files with a robust SQL database (e.g., PostgreSQL or H2 Database) via Spring Data JPA.
-* **Workflow Automation & AI Integration:** Integrating automation tools (like n8n or Zapier) to generate and send daily sales reports automatically via Email or WhatsApp, and applying predictive AI models to analyze sales history for inventory alerts.
+./mvnw spring-boot:run
+```
+
+The API starts on `http://localhost:8080`; Swagger UI is available at
+`http://localhost:8080/swagger-ui.html`.
+
+Run the test suite (uses an in-memory H2 database automatically — no setup needed):
+
+```bash
+./mvnw test
+```
+
+## 🔮 Roadmap
+
+* **Frontend** *(planned `v3.0.0`)* — a client application consuming this API, released as its own milestone.
+* **Workflow Automation & AI Integration** — automated daily sales reports (email/WhatsApp) and predictive AI
+  models over sales history for inventory alerts.
 
 ---
 👨‍💻 **Author:** Daniel Farias Barreto de Moura

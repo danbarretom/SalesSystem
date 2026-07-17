@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: sistema-vendas
+    runtime: docker
+    plan: free
+    branch: feature/v2-spring-boot
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/produtos
+    envVars:
+      - key: SUPABASE_DB_PASSWORD
+        sync: false
