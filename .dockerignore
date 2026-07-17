@@ -1,0 +1,10 @@
+target/
+.git/
+.github/
+.idea/
+.mvn/wrapper/maven-wrapper.jar
+*.iml
+README.md
+CHANGELOG.md
+CLAUDE.md
+LICENSE
