@@ -3,9 +3,9 @@ name: CI/CD Pipeline Solo
 on:
   push:
     branches: [ "main", "dev" ]
-    tags: [ "v*.*.*" ] # Dispara automação ao enviar tags (ex: v1.2.0)
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
+    types: [ opened, synchronize, reopened, closed ]
 
 permissions:
   contents: write # Permissão obrigatória para o bot criar a Release
@@ -16,8 +16,8 @@ jobs:
   # ==========================================
   testes:
     name: Compilar e Testar
-    # Só roda em branches, não roda quando você envia apenas a Tag
-    if: github.ref_type != 'tag'
+    # Não roda quando o evento é só o fechamento/merge do PR (já foi testado no push/synchronize)
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
@@ -32,37 +32,54 @@ jobs:
 
       - name: Executar Testes Unitários
         run: |
-          echo "Ambiente Java configurado com sucesso!"
-          # NOTA PARA O FUTURO: 
-          # Como o projeto atual é 'Java puro', rodar o JUnit 5 pelo terminal do Linux 
-          # exige o download manual do 'junit-platform-console-standalone.jar'.
-          # Porém, assim que migrarmos para o Spring Boot (que usa Maven), 
-          # este passo será resolvido apenas com o comando abaixo:
-          # mvn test
+          chmod +x mvnw
+          ./mvnw -B test
 
   # ==========================================
   # JOB 2: ENTREGA CONTÍNUA (CD) - AUTO RELEASE
   # ==========================================
   release:
     name: Criar Release no GitHub
-    # Roda EXCLUSIVAMENTE quando você cria e envia uma Tag (git push origin vX.X.X)
-    if: github.ref_type == 'tag'
+    # Roda só quando um PR de release/* é mesclado na main
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Extrair versão da Tag
+      - name: Extrair versão do CHANGELOG.md
         id: extract_version
-        # Pega a referência "refs/tags/v1.1.0" e limpa para deixar apenas "v1.1.0"
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Publicar Release
         run: |
-          echo "Gerando Release automática para a tag ${{ env.VERSION }}"
-          gh release create "${{ env.VERSION }}" \
-            --title "Release ${{ env.VERSION }}" \
+          VERSION=$(head -1 CHANGELOG.md | sed -E 's/^## \[([^]]+)\].*/\1/')
+          if [ -z "$VERSION" ]; then
+            echo "::error::Não foi possível extrair a versão da primeira linha '## [X.Y.Z]' do CHANGELOG.md"
+            exit 1
+          fi
+          echo "VERSION=v$VERSION" >> "$GITHUB_ENV"
+
+      - name: Verificar se a release já existe
+        run: |
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            echo "::error::A release $VERSION já existe. Abortando para evitar duplicidade."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Criar tag e publicar Release
+        run: |
+          echo "Gerando tag e Release automática para ${VERSION}"
+          gh release create "$VERSION" \
+            --target main \
+            --title "Release ${VERSION}" \
             --generate-notes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
