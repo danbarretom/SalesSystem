@@ -5,6 +5,7 @@ import { ProdutoFormPage } from './pages/ProdutoFormPage'
 import { ClientesPage } from './pages/ClientesPage'
 import { ClienteFormPage } from './pages/ClienteFormPage'
 import { VendasPage } from './pages/VendasPage'
+import { VendaFormPage } from './pages/VendaFormPage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/clientes" element={<ClientesPage />} />
         <Route path="/clientes/novo" element={<ClienteFormPage />} />
         <Route path="/vendas" element={<VendasPage />} />
+        <Route path="/vendas/nova" element={<VendaFormPage />} />
         <Route path="*" element={<Navigate to="/produtos" replace />} />
       </Routes>
     </BrowserRouter>
