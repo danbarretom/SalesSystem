@@ -4,6 +4,7 @@ import { vendaApi } from '../api/vendaApi'
 import { clienteApi } from '../api/clienteApi'
 import { produtoApi } from '../api/produtoApi'
 import { ApiError } from '../api/http'
+import { CampoData } from '../components/CampoData'
 import type { ClienteResponse } from '../types/cliente'
 import type { ProdutoResponse } from '../types/produto'
 import type { ItemVendaRequest, TipoVenda, VendaRequest } from '../types/venda'
@@ -132,19 +133,13 @@ export function VendaFormPage() {
               </select>
             </div>
 
-            <div>
-              <label htmlFor="dataVencimento" className="block text-sm font-medium text-gray-700">
-                Data de vencimento
-              </label>
-              <input
-                id="dataVencimento"
-                type="date"
-                required
-                value={dataVencimento}
-                onChange={(e) => setDataVencimento(e.target.value)}
-                className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-              />
-            </div>
+            <CampoData
+              id="dataVencimento"
+              label="Data de vencimento"
+              valorIso={dataVencimento}
+              onChange={setDataVencimento}
+              required
+            />
           </>
         )}
 

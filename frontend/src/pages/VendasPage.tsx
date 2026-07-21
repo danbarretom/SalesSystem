@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { vendaApi } from '../api/vendaApi'
 import { ApiError } from '../api/http'
+import { CampoData } from '../components/CampoData'
 import type { VendaResponse } from '../types/venda'
 
 const rotuloTipoVenda: Record<VendaResponse['tipoVenda'], string> = {
@@ -21,8 +22,16 @@ export function VendasPage() {
   const [vendas, setVendas] = useState<VendaResponse[]>([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState<string | null>(null)
+  const [inicio, setInicio] = useState('')
+  const [fim, setFim] = useState('')
 
   useEffect(() => {
+    carregarTodas()
+  }, [])
+
+  function carregarTodas() {
+    setCarregando(true)
+    setErro(null)
     vendaApi
       .listar()
       .then(setVendas)
@@ -30,14 +39,25 @@ export function VendasPage() {
         setErro(e instanceof ApiError ? e.erro.mensagem : 'Erro ao carregar vendas'),
       )
       .finally(() => setCarregando(false))
-  }, [])
-
-  if (carregando) {
-    return <p className="p-6 text-gray-500">Carregando vendas...</p>
   }
 
-  if (erro) {
-    return <p className="p-6 text-red-600">{erro}</p>
+  function buscarPorPeriodo(event: FormEvent) {
+    event.preventDefault()
+    setCarregando(true)
+    setErro(null)
+    vendaApi
+      .buscarPorPeriodo(inicio, fim)
+      .then(setVendas)
+      .catch((e: unknown) =>
+        setErro(e instanceof ApiError ? e.erro.mensagem : 'Erro ao buscar vendas por período'),
+      )
+      .finally(() => setCarregando(false))
+  }
+
+  function limparFiltro() {
+    setInicio('')
+    setFim('')
+    carregarTodas()
   }
 
   return (
@@ -52,7 +72,29 @@ export function VendasPage() {
         </Link>
       </div>
 
-      {vendas.length === 0 ? (
+      <form onSubmit={buscarPorPeriodo} className="mb-4 flex items-end gap-2">
+        <CampoData id="inicio" label="De" valorIso={inicio} onChange={setInicio} required />
+        <CampoData id="fim" label="Até" valorIso={fim} onChange={setFim} required />
+        <button
+          type="submit"
+          className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Buscar
+        </button>
+        <button
+          type="button"
+          onClick={limparFiltro}
+          className="text-sm font-medium text-gray-500 hover:text-gray-700"
+        >
+          Limpar filtro
+        </button>
+      </form>
+
+      {carregando ? (
+        <p className="text-gray-500">Carregando vendas...</p>
+      ) : erro ? (
+        <p className="text-red-600">{erro}</p>
+      ) : vendas.length === 0 ? (
         <p className="text-gray-500">Nenhuma venda registrada.</p>
       ) : (
         <table className="w-full border-collapse text-left text-sm">

@@ -47,12 +47,20 @@ export function ProdutosPage() {
     <div className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-800">Produtos</h1>
-        <Link
-          to="/produtos/novo"
-          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Novo produto
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/produtos/estoque-baixo"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900"
+          >
+            Ver estoque baixo
+          </Link>
+          <Link
+            to="/produtos/novo"
+            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Novo produto
+          </Link>
+        </div>
       </div>
 
       {produtos.length === 0 ? (
