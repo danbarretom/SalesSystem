@@ -10,6 +10,11 @@ export function ProdutosPage() {
   const [erro, setErro] = useState<string | null>(null)
 
   useEffect(() => {
+    carregarProdutos()
+  }, [])
+
+  function carregarProdutos() {
+    setCarregando(true)
     produtoApi
       .listar()
       .then(setProdutos)
@@ -17,7 +22,18 @@ export function ProdutosPage() {
         setErro(e instanceof ApiError ? e.erro.mensagem : 'Erro ao carregar produtos'),
       )
       .finally(() => setCarregando(false))
-  }, [])
+  }
+
+  async function handleExcluir(produto: ProdutoResponse) {
+    if (!window.confirm(`Excluir o produto "${produto.descricaoProduto}"?`)) return
+
+    try {
+      await produtoApi.deletar(produto.codigoProduto)
+      setProdutos((atual) => atual.filter((p) => p.codigoProduto !== produto.codigoProduto))
+    } catch (e) {
+      window.alert(e instanceof ApiError ? e.erro.mensagem : 'Erro ao excluir o produto')
+    }
+  }
 
   if (carregando) {
     return <p className="p-6 text-gray-500">Carregando produtos...</p>
@@ -49,6 +65,7 @@ export function ProdutosPage() {
               <th className="py-2 pr-4">Descrição</th>
               <th className="py-2 pr-4">Valor de venda</th>
               <th className="py-2 pr-4">Estoque</th>
+              <th className="py-2 pr-4">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -63,6 +80,21 @@ export function ProdutosPage() {
                   })}
                 </td>
                 <td className="py-2 pr-4">{produto.estoqueAtual}</td>
+                <td className="py-2 pr-4">
+                  <Link
+                    to={`/produtos/${produto.codigoProduto}/editar`}
+                    className="mr-3 text-blue-600 hover:text-blue-700"
+                  >
+                    Editar
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleExcluir(produto)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    Excluir
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

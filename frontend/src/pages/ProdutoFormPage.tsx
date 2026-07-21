@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState, type FormEvent } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { produtoApi } from '../api/produtoApi'
 import { ApiError } from '../api/http'
 import type { ProdutoRequest } from '../types/produto'
@@ -14,10 +14,34 @@ const valoresIniciais: ProdutoRequest = {
 
 export function ProdutoFormPage() {
   const navigate = useNavigate()
+  const { id } = useParams()
+  const emEdicao = id !== undefined
+
   const [dados, setDados] = useState<ProdutoRequest>(valoresIniciais)
+  const [carregando, setCarregando] = useState(emEdicao)
   const [salvando, setSalvando] = useState(false)
   const [mensagemErro, setMensagemErro] = useState<string | null>(null)
   const [detalhesErro, setDetalhesErro] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!emEdicao) return
+
+    produtoApi
+      .buscarPorId(Number(id))
+      .then((produto) =>
+        setDados({
+          descricaoProduto: produto.descricaoProduto,
+          valorCompra: produto.valorCompra,
+          valorVenda: produto.valorVenda,
+          estoqueAtual: produto.estoqueAtual,
+          estoqueMinimo: produto.estoqueMinimo,
+        }),
+      )
+      .catch((e: unknown) =>
+        setMensagemErro(e instanceof ApiError ? e.erro.mensagem : 'Erro ao carregar o produto'),
+      )
+      .finally(() => setCarregando(false))
+  }, [emEdicao, id])
 
   function atualizarCampo<K extends keyof ProdutoRequest>(campo: K, valor: ProdutoRequest[K]) {
     setDados((atual) => ({ ...atual, [campo]: valor }))
@@ -30,7 +54,11 @@ export function ProdutoFormPage() {
     setDetalhesErro([])
 
     try {
-      await produtoApi.criar(dados)
+      if (emEdicao) {
+        await produtoApi.atualizar(Number(id), dados)
+      } else {
+        await produtoApi.criar(dados)
+      }
       navigate('/produtos')
     } catch (e) {
       if (e instanceof ApiError) {
@@ -44,9 +72,15 @@ export function ProdutoFormPage() {
     }
   }
 
+  if (carregando) {
+    return <p className="p-6 text-gray-500">Carregando produto...</p>
+  }
+
   return (
     <div className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold text-gray-800">Novo produto</h1>
+      <h1 className="mb-4 text-2xl font-semibold text-gray-800">
+        {emEdicao ? 'Editar produto' : 'Novo produto'}
+      </h1>
 
       <form onSubmit={handleSubmit} className="max-w-md space-y-4">
         <div>

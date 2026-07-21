@@ -14,8 +14,10 @@ function App() {
       <Routes>
         <Route path="/produtos" element={<ProdutosPage />} />
         <Route path="/produtos/novo" element={<ProdutoFormPage />} />
+        <Route path="/produtos/:id/editar" element={<ProdutoFormPage />} />
         <Route path="/clientes" element={<ClientesPage />} />
         <Route path="/clientes/novo" element={<ClienteFormPage />} />
+        <Route path="/clientes/:id/editar" element={<ClienteFormPage />} />
         <Route path="/vendas" element={<VendasPage />} />
         <Route path="/vendas/nova" element={<VendaFormPage />} />
         <Route path="*" element={<Navigate to="/produtos" replace />} />

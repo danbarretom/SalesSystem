@@ -19,6 +19,17 @@ export function ClientesPage() {
       .finally(() => setCarregando(false))
   }, [])
 
+  async function handleExcluir(cliente: ClienteResponse) {
+    if (!window.confirm(`Excluir o cliente "${cliente.nomeCliente}"?`)) return
+
+    try {
+      await clienteApi.deletar(cliente.codigoCliente)
+      setClientes((atual) => atual.filter((c) => c.codigoCliente !== cliente.codigoCliente))
+    } catch (e) {
+      window.alert(e instanceof ApiError ? e.erro.mensagem : 'Erro ao excluir o cliente')
+    }
+  }
+
   if (carregando) {
     return <p className="p-6 text-gray-500">Carregando clientes...</p>
   }
@@ -49,6 +60,7 @@ export function ClientesPage() {
               <th className="py-2 pr-4">Nome</th>
               <th className="py-2 pr-4">Endereço</th>
               <th className="py-2 pr-4">Telefone</th>
+              <th className="py-2 pr-4">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -58,6 +70,21 @@ export function ClientesPage() {
                 <td className="py-2 pr-4">{cliente.nomeCliente}</td>
                 <td className="py-2 pr-4">{cliente.enderecoCliente}</td>
                 <td className="py-2 pr-4">{cliente.telefoneCliente}</td>
+                <td className="py-2 pr-4">
+                  <Link
+                    to={`/clientes/${cliente.codigoCliente}/editar`}
+                    className="mr-3 text-blue-600 hover:text-blue-700"
+                  >
+                    Editar
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => handleExcluir(cliente)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    Excluir
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

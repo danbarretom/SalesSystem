@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState, type FormEvent } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { clienteApi } from '../api/clienteApi'
 import { ApiError } from '../api/http'
 import type { ClienteRequest } from '../types/cliente'
@@ -12,10 +12,32 @@ const valoresIniciais: ClienteRequest = {
 
 export function ClienteFormPage() {
   const navigate = useNavigate()
+  const { id } = useParams()
+  const emEdicao = id !== undefined
+
   const [dados, setDados] = useState<ClienteRequest>(valoresIniciais)
+  const [carregando, setCarregando] = useState(emEdicao)
   const [salvando, setSalvando] = useState(false)
   const [mensagemErro, setMensagemErro] = useState<string | null>(null)
   const [detalhesErro, setDetalhesErro] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!emEdicao) return
+
+    clienteApi
+      .buscarPorId(Number(id))
+      .then((cliente) =>
+        setDados({
+          nomeCliente: cliente.nomeCliente,
+          enderecoCliente: cliente.enderecoCliente,
+          telefoneCliente: cliente.telefoneCliente,
+        }),
+      )
+      .catch((e: unknown) =>
+        setMensagemErro(e instanceof ApiError ? e.erro.mensagem : 'Erro ao carregar o cliente'),
+      )
+      .finally(() => setCarregando(false))
+  }, [emEdicao, id])
 
   function atualizarCampo<K extends keyof ClienteRequest>(campo: K, valor: ClienteRequest[K]) {
     setDados((atual) => ({ ...atual, [campo]: valor }))
@@ -28,7 +50,11 @@ export function ClienteFormPage() {
     setDetalhesErro([])
 
     try {
-      await clienteApi.criar(dados)
+      if (emEdicao) {
+        await clienteApi.atualizar(Number(id), dados)
+      } else {
+        await clienteApi.criar(dados)
+      }
       navigate('/clientes')
     } catch (e) {
       if (e instanceof ApiError) {
@@ -42,9 +68,15 @@ export function ClienteFormPage() {
     }
   }
 
+  if (carregando) {
+    return <p className="p-6 text-gray-500">Carregando cliente...</p>
+  }
+
   return (
     <div className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold text-gray-800">Novo cliente</h1>
+      <h1 className="mb-4 text-2xl font-semibold text-gray-800">
+        {emEdicao ? 'Editar cliente' : 'Novo cliente'}
+      </h1>
 
       <form onSubmit={handleSubmit} className="max-w-md space-y-4">
         <div>
