@@ -104,6 +104,7 @@ export function VendasPage() {
               <th className="py-2 pr-4">Data</th>
               <th className="py-2 pr-4">Tipo</th>
               <th className="py-2 pr-4">Cliente</th>
+              <th className="py-2 pr-4">Vencimento</th>
               <th className="py-2 pr-4">Itens</th>
               <th className="py-2 pr-4">Valor total</th>
             </tr>
@@ -115,6 +116,9 @@ export function VendasPage() {
                 <td className="py-2 pr-4">{formatarData(venda.dataVenda)}</td>
                 <td className="py-2 pr-4">{rotuloTipoVenda[venda.tipoVenda]}</td>
                 <td className="py-2 pr-4">{venda.cliente?.nomeCliente ?? '-'}</td>
+                <td className="py-2 pr-4">
+                  {venda.dataVencimento ? formatarData(venda.dataVencimento) : '-'}
+                </td>
                 <td className="py-2 pr-4">{venda.itens.length}</td>
                 <td className="py-2 pr-4">{formatarMoeda(venda.valorTotal)}</td>
               </tr>
