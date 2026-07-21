@@ -1,5 +1,6 @@
 import { Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
 import { NavBar } from './components/NavBar'
+import { DashboardPage } from './pages/DashboardPage'
 import { ProdutosPage } from './pages/ProdutosPage'
 import { ProdutoFormPage } from './pages/ProdutoFormPage'
 import { ProdutoEstoqueBaixoPage } from './pages/ProdutoEstoqueBaixoPage'
@@ -13,6 +14,7 @@ function App() {
     <BrowserRouter>
       <NavBar />
       <Routes>
+        <Route path="/" element={<DashboardPage />} />
         <Route path="/produtos" element={<ProdutosPage />} />
         <Route path="/produtos/novo" element={<ProdutoFormPage />} />
         <Route path="/produtos/:id/editar" element={<ProdutoFormPage />} />
@@ -22,7 +24,7 @@ function App() {
         <Route path="/clientes/:id/editar" element={<ClienteFormPage />} />
         <Route path="/vendas" element={<VendasPage />} />
         <Route path="/vendas/nova" element={<VendaFormPage />} />
-        <Route path="*" element={<Navigate to="/produtos" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
