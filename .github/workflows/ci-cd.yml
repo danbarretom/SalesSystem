@@ -35,6 +35,35 @@ jobs:
           chmod +x mvnw
           ./mvnw -B test
 
+  testes-frontend:
+    name: Testar Frontend
+    # Não roda quando o evento é só o fechamento/merge do PR (já foi testado no push/synchronize)
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependências
+        working-directory: frontend
+        run: npm ci
+
+      - name: Executar Testes
+        working-directory: frontend
+        run: npx vitest run
+
+      - name: Verificar Build de Produção
+        working-directory: frontend
+        run: npm run build
+
   # ==========================================
   # JOB 2: ENTREGA CONTÍNUA (CD) - AUTO RELEASE
   # ==========================================
