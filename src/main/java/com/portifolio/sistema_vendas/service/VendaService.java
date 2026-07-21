@@ -90,7 +90,6 @@ public class VendaService {
         return vendaRepository.findAll();
     }
 
-    // Repassa a chamada para o Repository filtrar as datas
     public List<Venda> buscarVendasPorPeriodo(LocalDate inicio, LocalDate fim) {
         return vendaRepository.findByDataVendaBetween(inicio, fim);
     }

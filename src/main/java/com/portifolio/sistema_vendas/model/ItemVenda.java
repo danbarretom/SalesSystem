@@ -12,13 +12,11 @@ public class ItemVenda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Muitos itens podem pertencer a UMA Venda
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "venda_id", nullable = false)
     private Venda venda;
 
-    // Muitos itens podem apontar para UM Produto
     @ManyToOne
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;

@@ -11,30 +11,24 @@ import java.util.Optional;
 @Service
 public class ProdutoService {
 
-    // A dependência do nosso banco de dados
     private final ProdutoRepository produtoRepository;
 
-    // Injeção de dependência via Construtor (A melhor prática recomendada pelo Spring)
     public ProdutoService(ProdutoRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
     }
 
-    // CREATE / UPDATE
     public Produto salvarProduto(Produto produto) {
         return produtoRepository.save(produto);
     }
 
-    // READ (Todos)
     public List<Produto> listarTodos() {
         return produtoRepository.findAll();
     }
 
-    // READ (Por ID)
     public Optional<Produto> buscarPorId(Long id) {
         return produtoRepository.findById(id);
     }
 
-    // UPDATE (por ID)
     public Produto atualizarProduto(Long id, Produto dadosAtualizados) {
         Produto produtoExistente = produtoRepository.findById(id)
                 .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Produto", id));
@@ -48,7 +42,6 @@ public class ProdutoService {
         return produtoRepository.save(produtoExistente);
     }
 
-    // DELETE
     public void deletarProduto(Long id) {
         if (!produtoRepository.existsById(id)) {
             throw RecursoNaoEncontradoException.paraId("Produto", id);
