@@ -3,6 +3,7 @@ import { NavBar } from './components/NavBar'
 import { ProdutosPage } from './pages/ProdutosPage'
 import { ProdutoFormPage } from './pages/ProdutoFormPage'
 import { ClientesPage } from './pages/ClientesPage'
+import { ClienteFormPage } from './pages/ClienteFormPage'
 import { VendasPage } from './pages/VendasPage'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/produtos" element={<ProdutosPage />} />
         <Route path="/produtos/novo" element={<ProdutoFormPage />} />
         <Route path="/clientes" element={<ClientesPage />} />
+        <Route path="/clientes/novo" element={<ClienteFormPage />} />
         <Route path="/vendas" element={<VendasPage />} />
         <Route path="*" element={<Navigate to="/produtos" replace />} />
       </Routes>
