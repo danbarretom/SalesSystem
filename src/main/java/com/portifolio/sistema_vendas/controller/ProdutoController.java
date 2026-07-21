@@ -52,7 +52,7 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponse> buscarProduto(@PathVariable Long id) {
         Produto produto = produtoService.buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + id));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Produto", id));
         return ResponseEntity.ok(ProdutoResponse.from(produto));
     }
 

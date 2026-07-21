@@ -37,7 +37,7 @@ public class ClienteService {
     // UPDATE (por ID)
     public Cliente atualizarCliente(Long id, Cliente dadosAtualizados) {
         Cliente clienteExistente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + id));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Cliente", id));
 
         clienteExistente.setNomeCliente(dadosAtualizados.getNomeCliente());
         clienteExistente.setEnderecoCliente(dadosAtualizados.getEnderecoCliente());
@@ -49,7 +49,7 @@ public class ClienteService {
     // DELETE
     public void deletarCliente(Long id) {
         if (!clienteRepository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + id);
+            throw RecursoNaoEncontradoException.paraId("Cliente", id);
         }
         clienteRepository.deleteById(id);
     }

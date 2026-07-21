@@ -48,7 +48,7 @@ public class VendaService {
         }
 
         Cliente clienteBanco = clienteRepository.findById(venda.getCliente().getCodigoCliente())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + venda.getCliente().getCodigoCliente()));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Cliente", venda.getCliente().getCodigoCliente()));
         venda.setCliente(clienteBanco);
     }
 
@@ -75,7 +75,7 @@ public class VendaService {
 
     private Produto resolverProdutoComEstoqueDisponivel(ItemVenda item) {
         Produto produtoBanco = produtoRepository.findById(item.getProduto().getCodigoProduto())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + item.getProduto().getCodigoProduto()));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Produto", item.getProduto().getCodigoProduto()));
 
         if (produtoBanco.getEstoqueAtual() < item.getQuantidade()) {
             throw new RegraNegocioException("Estoque insuficiente para o produto: " + produtoBanco.getDescricaoProduto() +

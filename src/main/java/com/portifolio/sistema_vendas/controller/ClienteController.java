@@ -39,7 +39,7 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponse> buscarCliente(@PathVariable Long id) {
         Cliente cliente = clienteService.buscarPorId(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + id));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Cliente", id));
         return ResponseEntity.ok(ClienteResponse.from(cliente));
     }
 

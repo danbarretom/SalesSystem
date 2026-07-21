@@ -37,7 +37,7 @@ public class ProdutoService {
     // UPDATE (por ID)
     public Produto atualizarProduto(Long id, Produto dadosAtualizados) {
         Produto produtoExistente = produtoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + id));
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Produto", id));
 
         produtoExistente.setDescricaoProduto(dadosAtualizados.getDescricaoProduto());
         produtoExistente.setValorCompra(dadosAtualizados.getValorCompra());
@@ -51,7 +51,7 @@ public class ProdutoService {
     // DELETE
     public void deletarProduto(Long id) {
         if (!produtoRepository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Produto não encontrado com o código: " + id);
+            throw RecursoNaoEncontradoException.paraId("Produto", id);
         }
         produtoRepository.deleteById(id);
     }
