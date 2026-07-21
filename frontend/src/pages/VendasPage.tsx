@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { Fragment, useEffect, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { vendaApi } from '../api/vendaApi'
 import { ApiError } from '../api/http'
@@ -24,6 +24,7 @@ export function VendasPage() {
   const [erro, setErro] = useState<string | null>(null)
   const [inicio, setInicio] = useState('')
   const [fim, setFim] = useState('')
+  const [vendaExpandidaId, setVendaExpandidaId] = useState<number | null>(null)
 
   useEffect(() => {
     carregarTodas()
@@ -58,6 +59,10 @@ export function VendasPage() {
     setInicio('')
     setFim('')
     carregarTodas()
+  }
+
+  function alternarExpandida(id: number) {
+    setVendaExpandidaId((atual) => (atual === id ? null : id))
   }
 
   return (
@@ -111,17 +116,51 @@ export function VendasPage() {
           </thead>
           <tbody>
             {vendas.map((venda) => (
-              <tr key={venda.id} className="border-b border-gray-100">
-                <td className="py-2 pr-4">{venda.id}</td>
-                <td className="py-2 pr-4">{formatarData(venda.dataVenda)}</td>
-                <td className="py-2 pr-4">{rotuloTipoVenda[venda.tipoVenda]}</td>
-                <td className="py-2 pr-4">{venda.cliente?.nomeCliente ?? '-'}</td>
-                <td className="py-2 pr-4">
-                  {venda.dataVencimento ? formatarData(venda.dataVencimento) : '-'}
-                </td>
-                <td className="py-2 pr-4">{venda.itens.length}</td>
-                <td className="py-2 pr-4">{formatarMoeda(venda.valorTotal)}</td>
-              </tr>
+              <Fragment key={venda.id}>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 pr-4">{venda.id}</td>
+                  <td className="py-2 pr-4">{formatarData(venda.dataVenda)}</td>
+                  <td className="py-2 pr-4">{rotuloTipoVenda[venda.tipoVenda]}</td>
+                  <td className="py-2 pr-4">{venda.cliente?.nomeCliente ?? '-'}</td>
+                  <td className="py-2 pr-4">
+                    {venda.dataVencimento ? formatarData(venda.dataVencimento) : '-'}
+                  </td>
+                  <td className="py-2 pr-4">
+                    <button
+                      type="button"
+                      onClick={() => alternarExpandida(venda.id)}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      {venda.itens.length} {vendaExpandidaId === venda.id ? '▲' : '▼'}
+                    </button>
+                  </td>
+                  <td className="py-2 pr-4">{formatarMoeda(venda.valorTotal)}</td>
+                </tr>
+                {vendaExpandidaId === venda.id && (
+                  <tr className="border-b border-gray-100 bg-gray-50">
+                    <td colSpan={7} className="px-4 py-3">
+                      <table className="w-full text-left text-sm">
+                        <thead>
+                          <tr className="text-gray-500">
+                            <th className="py-1 pr-4">Produto</th>
+                            <th className="py-1 pr-4">Quantidade</th>
+                            <th className="py-1 pr-4">Subtotal</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {venda.itens.map((item) => (
+                            <tr key={item.id}>
+                              <td className="py-1 pr-4">{item.produto.descricaoProduto}</td>
+                              <td className="py-1 pr-4">{item.quantidade}</td>
+                              <td className="py-1 pr-4">{formatarMoeda(item.subtotal)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
             ))}
           </tbody>
         </table>
