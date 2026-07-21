@@ -25,7 +25,7 @@ visible, not just the latest state:
   architecture (controller/service/repository/DTO), Bean Validation, centralized exception handling,
   optimistic locking, an automated test suite, and a live Docker deployment. The Java SE version stays fully
   intact and browsable at the tags above — nothing was thrown away, just outgrown.
-* **`v3.0.0`** *(this version)* — A React/TypeScript frontend consuming the REST API: full CRUD for
+* **[`v3.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v3.0.0)** *(this version)* — A React/TypeScript frontend consuming the REST API: full CRUD for
   Products and Customers, sale registration (cash and credit) with a dashboard summary, deployed
   independently on Vercel. Kept as its own milestone rather than bundled into `v2.0.0`, so the backend-only
   and full-stack states are both preserved in history.

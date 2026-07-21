@@ -1,3 +1,18 @@
+## [3.0.0] - 2026-07-21
+
+### Adicionado
+- Frontend em React 19 + TypeScript + Vite, consumindo a API REST existente, com Tailwind CSS para estilos e React Router para navegação.
+- Telas de listagem, cadastro, edição e exclusão para Produto e Cliente; registro, listagem e filtro por período para Venda (à vista e a prazo), com expansão de linha mostrando os itens de cada venda.
+- Tela de estoque baixo e um dashboard inicial com resumo do sistema (totais de produtos, clientes, vendas, estoque baixo e valor total vendido).
+- Camada de tipos TypeScript e módulos de API espelhando os DTOs/endpoints do backend, com tratamento de erro consistente (`ApiError`).
+- Suíte de testes do frontend com Vitest + React Testing Library, cobrindo funções puras, interação de UI e componentes com a API mockada.
+- Job de CI (`testes-frontend`) rodando a suíte de testes e o build de produção do frontend em todo push/PR.
+- Deploy de produção do frontend na Vercel.
+
+### Alterado
+- Backend ganhou configuração de CORS (`CorsConfig`), liberando as origens de desenvolvimento local e a URL de produção do frontend na Vercel — necessário para uma aplicação em outra origem conseguir chamar a API.
+- `README.md` reescrito para refletir o sistema como full-stack (backend + frontend), com stack técnica, instruções de execução e histórico do projeto atualizados.
+
 ## [2.0.0] - 2026-07-17
 
 ### Adicionado
