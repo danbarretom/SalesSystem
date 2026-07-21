@@ -153,6 +153,11 @@ npm test
 
 ## 🔮 Roadmap
 
+* **Infrastructure** — migrate the backend off Render's free tier onto a self-managed, always-on Oracle
+  Cloud instance, removing the cold-start delay after inactivity.
+* **Frontend polish** — visual/design improvements and UX refinements beyond the current functional baseline.
+* **Business-rule improvements** — evolve the domain logic to be genuinely more useful for real-world use,
+  not just a portfolio demonstration; approached with product thinking rather than resume-driven scope.
 * **Workflow Automation & AI Integration** — automated daily sales reports (email/WhatsApp) and predictive AI
   models over sales history for inventory alerts.
 
