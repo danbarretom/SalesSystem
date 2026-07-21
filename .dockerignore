@@ -2,6 +2,7 @@ target/
 .git/
 .github/
 .idea/
+frontend/
 .mvn/wrapper/maven-wrapper.jar
 *.iml
 README.md

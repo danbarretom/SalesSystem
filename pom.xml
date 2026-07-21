@@ -12,7 +12,7 @@
 	<artifactId>sistema-vendas</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SalesSystem</name>
-	<description>Spring Boot REST API for managing products, customers, and sales — evolved from a pure Java SE console application built for a college OOP course.</description>
+	<description>Full-stack sales management system (Spring Boot REST API + React/TypeScript frontend) for managing products, customers, and sales — evolved from a pure Java SE console application built for a college OOP course.</description>
 	<url>https://github.com/danbarretom/SalesSystem</url>
 	<licenses>
 		<license>
