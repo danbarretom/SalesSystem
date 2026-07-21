@@ -3,7 +3,7 @@ services:
     name: sistema-vendas
     runtime: docker
     plan: free
-    branch: feature/v2-spring-boot
+    branch: main
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/produtos
     envVars:

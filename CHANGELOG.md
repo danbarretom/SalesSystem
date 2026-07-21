@@ -1,3 +1,14 @@
+## [3.0.1] - 2026-07-21
+
+### Corrigido
+- `render.yaml` apontava para a branch `feature/v2-spring-boot`, já apagada — corrigido para `main`.
+- `.dockerignore` não excluía `frontend/`, incluindo esses arquivos sem necessidade no contexto de build do Docker do backend.
+- `frontend/README.md` era o boilerplate padrão do Vite, nunca customizado — removido (o `README.md` da raiz já cobre a documentação do frontend).
+- `pom.xml` com descrição desatualizada, ainda descrevendo o projeto como só backend — atualizada para refletir o sistema full-stack.
+
+### Alterado
+- `README.md`: Roadmap atualizado com os próximos passos do projeto (migração do backend para Oracle Cloud, melhorias de interface do frontend, melhorias de regra de negócio).
+
 ## [3.0.0] - 2026-07-21
 
 ### Adicionado
