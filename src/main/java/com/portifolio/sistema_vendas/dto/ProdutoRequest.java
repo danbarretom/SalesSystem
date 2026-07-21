@@ -5,11 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public record ProdutoRequest(
-        @NotBlank(message = "descricaoProduto é obrigatório") String descricaoProduto,
+        @NotBlank(message = "descricaoProduto é obrigatório") @Size(max = 255, message = "descricaoProduto deve ter no máximo 255 caracteres") String descricaoProduto,
         @NotNull(message = "valorCompra é obrigatório") @PositiveOrZero(message = "valorCompra não pode ser negativo") BigDecimal valorCompra,
         @NotNull(message = "valorVenda é obrigatório") @Positive(message = "valorVenda deve ser maior que zero") BigDecimal valorVenda,
         @NotNull(message = "estoqueAtual é obrigatório") @PositiveOrZero(message = "estoqueAtual não pode ser negativo") Integer estoqueAtual,

@@ -33,56 +33,63 @@ public class VendaService {
     @Transactional
     public Venda salvarVenda(Venda venda) {
         if (venda.getTipoVenda() == TipoVenda.A_PRAZO) {
-            if (venda.getCliente() == null || venda.getDataVencimento() == null) {
-                throw new RegraNegocioException("Vendas a prazo exigem Cliente e Data de Vencimento!");
-            }
-
-            Cliente clienteBanco = clienteRepository.findById(venda.getCliente().getCodigoCliente())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o código: " + venda.getCliente().getCodigoCliente()));
-            venda.setCliente(clienteBanco);
+            resolverClienteParaVendaAPrazo(venda);
         }
 
         venda.setDataVenda(LocalDate.now());
+        venda.setValorTotal(processarItens(venda));
 
+        return vendaRepository.save(venda);
+    }
+
+    private void resolverClienteParaVendaAPrazo(Venda venda) {
+        if (venda.getCliente() == null || venda.getDataVencimento() == null) {
+            throw new RegraNegocioException("Vendas a prazo exigem Cliente e Data de Vencimento!");
+        }
+
+        Cliente clienteBanco = clienteRepository.findById(venda.getCliente().getCodigoCliente())
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Cliente", venda.getCliente().getCodigoCliente()));
+        venda.setCliente(clienteBanco);
+    }
+
+    private BigDecimal processarItens(Venda venda) {
         BigDecimal totalDaVenda = BigDecimal.ZERO;
 
         for (ItemVenda item : venda.getItens()) {
+            Produto produtoBanco = resolverProdutoComEstoqueDisponivel(item);
 
-            Produto produtoBanco = produtoRepository.findById(item.getProduto().getCodigoProduto())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado com o código: " + item.getProduto().getCodigoProduto()));
-
-            // Validação de Estoque
-            if (produtoBanco.getEstoqueAtual() < item.getQuantidade()) {
-                throw new RegraNegocioException("Estoque insuficiente para o produto: " + produtoBanco.getDescricaoProduto() +
-                        ". Quantidade disponível: " + produtoBanco.getEstoqueAtual());
-            }
-            // Abate o estoque
-            produtoBanco.setEstoqueAtual(produtoBanco.getEstoqueAtual() - item.getQuantidade());
-
-            // Garante que o item persistido referencia a entidade gerenciada, não o objeto parcial vindo da requisição
+            // Reatribui a referência gerenciada: o Produto que chega no item pode estar detached,
+            // e o decremento de estoque abaixo só é persistido via dirty-checking do Hibernate
+            // se a entidade associada for a instância gerenciada, não a do request.
             item.setProduto(produtoBanco);
 
-            // Calcula o subtotal (Preço do banco x Quantidade)
             BigDecimal subtotalItem = produtoBanco.getValorVenda().multiply(new BigDecimal(item.getQuantidade()));
             item.setSubtotal(subtotalItem);
             item.setVenda(venda);
 
-            // Soma o subtotal do item ao Total Geral da Venda
             totalDaVenda = totalDaVenda.add(subtotalItem);
         }
 
-        // 4. Salva o valor total calculado na venda
-        venda.setValorTotal(totalDaVenda);
+        return totalDaVenda;
+    }
 
-        // 5. Salva tudo de uma vez
-        return vendaRepository.save(venda);
+    private Produto resolverProdutoComEstoqueDisponivel(ItemVenda item) {
+        Produto produtoBanco = produtoRepository.findById(item.getProduto().getCodigoProduto())
+                .orElseThrow(() -> RecursoNaoEncontradoException.paraId("Produto", item.getProduto().getCodigoProduto()));
+
+        if (produtoBanco.getEstoqueAtual() < item.getQuantidade()) {
+            throw new RegraNegocioException("Estoque insuficiente para o produto: " + produtoBanco.getDescricaoProduto() +
+                    ". Quantidade disponível: " + produtoBanco.getEstoqueAtual());
+        }
+        produtoBanco.setEstoqueAtual(produtoBanco.getEstoqueAtual() - item.getQuantidade());
+
+        return produtoBanco;
     }
 
     public List<Venda> listarTodas() {
         return vendaRepository.findAll();
     }
 
-    // Repassa a chamada para o Repository filtrar as datas
     public List<Venda> buscarVendasPorPeriodo(LocalDate inicio, LocalDate fim) {
         return vendaRepository.findByDataVendaBetween(inicio, fim);
     }

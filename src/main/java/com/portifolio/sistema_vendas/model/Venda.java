@@ -17,8 +17,6 @@ public class Venda {
     @Column(nullable = false)
     private LocalDate dataVenda;
 
-    // NOVO: nullable = true (ou basta remover o nullable=false).
-    // Assim, o banco aceita vendas sem cliente.
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
@@ -29,10 +27,8 @@ public class Venda {
     @Column(nullable = false)
     private BigDecimal valorTotal;
 
-    // NOVO: Data de vencimento (só será preenchida se for a prazo)
     private LocalDate dataVencimento;
 
-    // NOVO: Usando Enum para o banco de dados
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoVenda tipoVenda;

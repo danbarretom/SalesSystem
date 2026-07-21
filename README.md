@@ -1,11 +1,13 @@
 # SalesSystem
 
-A Spring Boot REST API for managing products, customers, and sales — the current form of a project that
-started as a pure Java SE console application for a college OOP course and was rebuilt, from the ground up,
-into a tested, database-backed backend.
+A full-stack sales management system — Spring Boot REST API + React/TypeScript frontend — for managing
+products, customers, and sales. The current form of a project that started as a pure Java SE console
+application for a college OOP course, rebuilt from the ground up first into a tested, database-backed
+backend, then into a complete web application.
 
-🔗 **Live demo:** [`sistema-vendas-e125.onrender.com/swagger-ui.html`](https://sistema-vendas-e125.onrender.com/swagger-ui.html)
-(free-tier hosting — the first request after a period of inactivity can take 30-60s to wake up).
+🔗 **Live demo:** [`sales-system-ivory.vercel.app`](https://sales-system-ivory.vercel.app) (frontend).
+API docs: [`sistema-vendas-e125.onrender.com/swagger-ui.html`](https://sistema-vendas-e125.onrender.com/swagger-ui.html)
+(backend is free-tier hosting — the first request after a period of inactivity can take 30-60s to wake up).
 
 ## 📖 Project History
 
@@ -18,14 +20,15 @@ visible, not just the latest state:
 * **[`v1.2.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v1.2.0)** — The same Java SE app,
   refined independently after the grade was in: a Clean Code pass across every manager, a full JUnit 5 suite
   (100% class coverage), custom exceptions, and a GitHub Actions CI/CD pipeline.
-* **[`v2.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v2.0.0)** *(this version)* — A complete
-  architectural rewrite into a Spring Boot REST API: a real relational database instead of flat files, a
-  layered architecture (controller/service/repository/DTO), Bean Validation, centralized exception handling,
+* **[`v2.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v2.0.0)** — A complete architectural
+  rewrite into a Spring Boot REST API: a real relational database instead of flat files, a layered
+  architecture (controller/service/repository/DTO), Bean Validation, centralized exception handling,
   optimistic locking, an automated test suite, and a live Docker deployment. The Java SE version stays fully
   intact and browsable at the tags above — nothing was thrown away, just outgrown.
-
-A frontend is the planned next chapter, kept as its own milestone rather than bundled in here — see
-[Roadmap](#-roadmap) below.
+* **[`v3.0.0`](https://github.com/danbarretom/SalesSystem/releases/tag/v3.0.0)** *(this version)* — A React/TypeScript frontend consuming the REST API: full CRUD for
+  Products and Customers, sale registration (cash and credit) with a dashboard summary, deployed
+  independently on Vercel. Kept as its own milestone rather than bundled into `v2.0.0`, so the backend-only
+  and full-stack states are both preserved in history.
 
 ## 🚀 Features
 
@@ -37,6 +40,14 @@ A frontend is the planned next chapter, kept as its own milestone rather than bu
   subtotal/total calculation, credit-sale rules (a valid customer and due date are required), and queries by
   date range.
 
+**Frontend**
+* **Full CRUD UI** for Products and Customers (list, create, edit, delete), plus a low-stock view.
+* **Sales workflow** — register cash or credit sales with a dynamic item list, list sales, filter by date
+  range, and expand a sale to see its line items.
+* **Dashboard** — a landing page summarizing totals (products, customers, sales, low-stock count, total sold).
+* **Automated tests** — Vitest + React Testing Library, covering pure logic, UI interaction, and
+  component behavior against a mocked API layer.
+
 **Architecture & Quality**
 * **Layered architecture** — controllers stay thin, business rules live in the service layer, and entities
   are never exposed directly: dedicated request/response DTOs carry Bean Validation everywhere.
@@ -46,19 +57,30 @@ A frontend is the planned next chapter, kept as its own milestone rather than bu
 * **Automated test suite** — 71 tests across four layers: Mockito unit tests for business rules, `@DataJpaTest`
   for custom queries, `@WebMvcTest` for HTTP-layer behavior, and a full-context integration test proving that
   Hibernate's dirty-checking actually persists stock changes, not just an in-memory mutation.
-* **CI/CD** — GitHub Actions runs the full test suite on every push/PR to `main`/`dev`; merging a `release/*`
-  branch into `main` auto-creates the GitHub tag and Release, reading the version straight from
-  `CHANGELOG.md`. Deployed as a Docker container on Render, built from a multi-stage `Dockerfile`.
+* **CI/CD** — GitHub Actions runs both the backend (Maven) and frontend (Vitest) test suites on every
+  push/PR to `main`/`dev`; merging a `release/*` PR into `main` auto-creates the GitHub tag and Release,
+  reading the version straight from `CHANGELOG.md`. Backend deployed as a Docker container on Render, built
+  from a multi-stage `Dockerfile`; frontend deployed as a static build on Vercel.
 
 ## 🛠️ Tech Stack
 
+**Backend**
 * **Framework:** Spring Boot 4.1, Spring Data JPA, Spring Web MVC
 * **Language:** Java 21 (Eclipse Temurin LTS)
 * **Database:** PostgreSQL (hosted on Supabase) for the running app; H2 in-memory for the test suite
 * **Testing:** JUnit 5, Mockito, AssertJ
 * **API Docs:** springdoc-openapi (Swagger UI)
-* **Build/DevOps:** Maven, Docker, GitHub Actions, GitFlow (Semantic Versioning)
 * **Deployment:** Render (Docker runtime)
+
+**Frontend**
+* **Framework:** React 19, TypeScript, Vite
+* **Styling:** Tailwind CSS
+* **Routing:** React Router
+* **Testing:** Vitest, React Testing Library
+* **Deployment:** Vercel
+
+**Shared / DevOps**
+* **Build/DevOps:** Maven, npm, Docker, GitHub Actions, GitFlow (Semantic Versioning)
 
 ## 🔌 API Overview
 
@@ -112,9 +134,25 @@ Run the test suite (uses an in-memory H2 database automatically — no setup nee
 ./mvnw test
 ```
 
+### Frontend
+
+Requires Node.js.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app starts on `http://localhost:5173` and points at `http://localhost:8080` by default (see
+`frontend/.env.development`). Run its test suite with:
+
+```bash
+npm test
+```
+
 ## 🔮 Roadmap
 
-* **Frontend** *(planned `v3.0.0`)* — a client application consuming this API, released as its own milestone.
 * **Workflow Automation & AI Integration** — automated daily sales reports (email/WhatsApp) and predictive AI
   models over sales history for inventory alerts.
 
