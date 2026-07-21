@@ -13,6 +13,9 @@ export function NavBar() {
       <NavLink to="/clientes" className={linkClass}>
         Clientes
       </NavLink>
+      <NavLink to="/vendas" className={linkClass}>
+        Vendas
+      </NavLink>
     </nav>
   )
 }
