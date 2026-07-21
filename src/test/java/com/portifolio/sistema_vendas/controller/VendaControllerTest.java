@@ -1,7 +1,6 @@
 package com.portifolio.sistema_vendas.controller;
 
 import com.portifolio.sistema_vendas.exception.RegraNegocioException;
-import com.portifolio.sistema_vendas.model.Cliente;
 import com.portifolio.sistema_vendas.model.ItemVenda;
 import com.portifolio.sistema_vendas.model.Produto;
 import com.portifolio.sistema_vendas.model.TipoVenda;
