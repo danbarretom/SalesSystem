@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { produtoApi } from '../api/produtoApi'
 import { ApiError } from '../api/http'
 import type { ProdutoResponse } from '../types/produto'
@@ -28,7 +29,15 @@ export function ProdutosPage() {
 
   return (
     <div className="p-6">
-      <h1 className="mb-4 text-2xl font-semibold text-gray-800">Produtos</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-gray-800">Produtos</h1>
+        <Link
+          to="/produtos/novo"
+          className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          Novo produto
+        </Link>
+      </div>
 
       {produtos.length === 0 ? (
         <p className="text-gray-500">Nenhum produto cadastrado.</p>
